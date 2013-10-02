@@ -11,6 +11,7 @@ module MiniDOM
 
 	include("clib.jl")
 	include("types.jl")
-	
+	include("errors.jl")
+
 	include("document.jl")
 end

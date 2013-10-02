@@ -1,6 +1,7 @@
 
 function parsefile(filename::ASCIIString)
 	p = ccall(xmlParseFile, Ptr{Void}, (Ptr{Cchar},), filename)
+	p != nullptr || throw(XMLParseError("Failure in parsing an XML file."))
 	XMLDocument(p)
 end
 
