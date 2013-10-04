@@ -196,3 +196,15 @@ end
 has_attributes(x::XMLElement) = (x.node._struct.attrs != nullptr)
 attributes(x::XMLElement) = XMLAttrIter(x.node._struct.attrs)
 
+# element access
+
+immutable XMLElementIter
+	parent_ptr::Xptr
+end
+
+Base.start(it::XMLElementIter) = ccall(xmlFirstElementChild, Xptr, (Xptr,), it.parent_ptr)
+Base.done(it::XMLElementIter, p::Xptr) = (p == nullptr)
+Base.next(it::XMLElementIter, p::Xptr) = (XMLElement(p), ccall(xmlNextElementSibling, Xptr, (Xptr,), p))
+
+child_elements(x::XMLElement) = XMLElementIter(x.node.ptr)
+
