@@ -27,7 +27,7 @@ ras = collect(attributes(xroot))
 
 # children of root (text nodes and books)
 
-rcs = collect(children(xroot))
+rcs = collect(child_nodes(xroot))
 @assert length(rcs) == 5  # text, book[1], text, book[1], text
 
 @assert is_textnode(rcs[1])
@@ -67,6 +67,11 @@ xb2 = XMLElement(rcs[4])
 @assert has_children(xb2)
 @assert attribute(xb2, "category") == "CHILDREN"
 
+rces = get_elements_by_tagname(xroot, "book")
+@assert length(rces) == 2
+@assert isa(rces, Vector{XMLElement})
+@assert attribute(rces[1], "category") == "COOKING"
+@assert attribute(rces[2], "category") == "CHILDREN"
 
 # child elements of book[1]
 
@@ -82,7 +87,7 @@ c1, c2, c3, c4 = ces[1], ces[2], ces[3], ces[4]
 @assert content(c1) == "Everyday Italian"
 
 @assert has_children(c1)
-c1cs = collect(children(c1))
+c1cs = collect(child_nodes(c1))
 @assert length(c1cs) == 1
 c1c = c1cs[1]
 @assert is_textnode(c1c)
@@ -102,6 +107,14 @@ c1c = c1cs[1]
 @assert name(c4) == "price"
 @assert !has_attributes(c4)
 @assert content(c4) == "30.00"
+
+cy = find_element(xb1, "year")
+@assert isa(cy, XMLElement)
+@assert name(cy) == "year"
+@assert content(cy) == "2005"
+
+cz = find_element(xb1, "abc")
+@assert is(cz, nothing)
 
 free(xdoc)
 

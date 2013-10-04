@@ -7,7 +7,8 @@ module MiniDOM
 	XMLAttr, XMLAttrIter, XMLNode, XMLNodeIter, XMLElement, XMLElementIter,
 	name, nodetype, value, content, attribute,
 	is_elementnode, is_textnode, is_commentnode, is_cdatanode,
-	children, has_children, attributes, has_attributes, child_elements,
+	child_nodes, has_children, attributes, has_attributes, child_elements,
+	find_element, get_elements_by_tagname,
 
 	# document
 	XMLDocument,

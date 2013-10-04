@@ -152,7 +152,7 @@ Base.start(it::XMLNodeIter) = it.p
 Base.done(it::XMLNodeIter, p::Xptr) = (p == nullptr)
 Base.next(it::XMLNodeIter, p::Xptr) = (nd = XMLNode(p); (nd, nd._struct.next))
 
-children(nd::XMLNode) = XMLNodeIter(nd._struct.children) 
+child_nodes(nd::XMLNode) = XMLNodeIter(nd._struct.children) 
 
 function content(nd::XMLNode)
 	pct = ccall(xmlNodeGetContent, Xstr, (Xptr,), nd.ptr)
@@ -182,7 +182,7 @@ end
 name(x::XMLElement) = name(x.node)
 nodetype(x::XMLElement) = XML_ELEMENT_NODE
 has_children(x::XMLElement) = has_children(x.node)
-children(x::XMLElement) = children(x.node)
+child_nodes(x::XMLElement) = child_nodes(x.node)
 content(x::XMLElement) = content(x.node)
 
 # attribute access
@@ -207,4 +207,25 @@ Base.done(it::XMLElementIter, p::Xptr) = (p == nullptr)
 Base.next(it::XMLElementIter, p::Xptr) = (XMLElement(p), ccall(xmlNextElementSibling, Xptr, (Xptr,), p))
 
 child_elements(x::XMLElement) = XMLElementIter(x.node.ptr)
+
+# elements by tag name
+
+function find_element(x::XMLElement, n::ASCIIString)
+	for c in child_elements(x)
+		if name(c) == n
+			return c
+		end
+	end 
+	return nothing
+end
+
+function get_elements_by_tagname(x::XMLElement, n::ASCIIString)
+	lst = Array(XMLElement, 0)
+	for c in child_elements(x)
+		if name(c) == n
+			push!(lst, c)
+		end
+	end 
+	return lst
+end
 
