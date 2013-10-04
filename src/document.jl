@@ -32,8 +32,7 @@ immutable _XMLDocStruct  # use the same layout as C
 	properties::Cint
 end
 
-
-immutable XMLDocument
+type XMLDocument
 	ptr::Ptr{Void}
 	_struct::_XMLDocStruct
 
@@ -41,7 +40,7 @@ immutable XMLDocument
 		s::_XMLDocStruct = unsafe_load(convert(Ptr{_XMLDocStruct}, ptr))
 
 		# validate integrity
-		@assert s.nodetype == DOCUMENT_NODE
+		@assert s.nodetype == XML_DOCUMENT_NODE
 		@assert s.doc == ptr
 
 		new(ptr, s)
@@ -53,6 +52,12 @@ encoding(xdoc::XMLDocument) = bytestring(xdoc._struct.encoding)
 compression(xdoc::XMLDocument) = int(xdoc._struct.compression)
 standalone(xdoc::XMLDocument) = int(xdoc._struct.standalone)
 
+function docelement(xdoc::XMLDocument)
+	pr = ccall(xmlDocGetRootElement, Ptr{Void}, (Ptr{Void},), xdoc.ptr)
+	pr != nullptr || throw(XMLNoRootError())
+	XMLElement(pr)
+end
+
 #### parse and free
 
 function parsefile(filename::ASCIIString)
@@ -63,5 +68,6 @@ end
 
 function free(xdoc::XMLDocument)
 	ccall(xmlFreeDoc, Void, (Ptr{Void},), xdoc.ptr)
+	xdoc.ptr = nullptr
 end
 

@@ -1,6 +1,6 @@
 # C functions in the library
 
-const libxml2 = dlopen("libxml2")
+const libxml2 = dlopen("libxml2", RTLD_GLOBAL)
 
 macro lx2func(fname)  # the macro to get functions from libxml2
 	quote
@@ -9,24 +9,37 @@ macro lx2func(fname)  # the macro to get functions from libxml2
 end
 
 const nullptr = convert(Ptr{Void}, 0)
-const nullsz = convert(Ptr{Cchar}, 0)
-
 const ptrsize = sizeof(Ptr{Void})
 
 @assert ptrsize == sizeof(Uint)
 
-# XML Documents
+# supporting functions
+
+#
+# After tests, it seems that free in libc instead of xmlFree 
+# should be used here
+#
+@lx2func xmlFree
+_xmlfree{T}(p::Ptr{T}) = ccall(:free, Void, (Ptr{T},), p)  
+
+function _xcopystr(p::Ptr{Uint8}) 
+	if p != nullptr
+		r = bytestring(p)
+		_xmlfree(p)
+		return r
+	else
+		return ""
+	end
+end
+
+# functions for nodes
+
+@lx2func xmlNodeGetContent
+
+# functions for documents
 
 @lx2func xmlParseFile
 @lx2func xmlFreeDoc
+@lx2func xmlDocGetRootElement
 
-# content extraction from pointer
 
-_pxtr_int(p::Ptr{Void}) = int(unsafe_load(convert(Ptr{Cint}, p)))
-
-function _pxtr_str(p::Ptr{Void})
-	sz = unsafe_load(convert(Ptr{Ptr{Cchar}}, p))
-	return (sz == nullsz ? "" : bytestring(sz))::ASCIIString
-end
-
-_pxtr_ptr(p::Ptr{Void}) = unsafe_load(convert(Ptr{Ptr{Void}}, p))

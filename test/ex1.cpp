@@ -43,7 +43,9 @@ void print_xmltree(xmlNodePtr xroot, int level)
     
     if (xroot->children && xroot->children->next == 0 && xroot->children->type == XML_TEXT_NODE)
     {
-        printf("{%s}", xmlNodeGetContent(xroot->children));
+        xmlChar *sz = xmlNodeGetContent(xroot->children);
+        printf("{%s}", sz);
+        xmlFree(sz);
     }
     printf("\n");
 
@@ -65,10 +67,15 @@ int main(int argc, char *argv[])
 {    
     // parse the file into a tree
     xmlDocPtr xdoc = xmlParseFile("ex1.xml");
+
+    printf("struct sizes:\n"); 
+    printf("\txmlDoc  : %lu\n", sizeof(xmlDoc));
+    printf("\txmlNode : %lu\n", sizeof(xmlNode));
+    printf("\txmlAttr : %lu\n", sizeof(xmlAttr));
+    printf("\n");
     
     // print document information
-    printf("XML document:\n");
-    printf("struct size = %lu\n", sizeof(*xdoc));
+    printf("XML document:\n");    
     assert(xdoc->doc == xdoc);
 
     printf("\ttype = %d\n", xdoc->type);

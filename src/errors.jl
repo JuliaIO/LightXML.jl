@@ -5,6 +5,8 @@ immutable XMLParseError <: XMLError
 	msg::ASCIIString
 end
 
+immutable XMLNoRootError <: XMLError
+end
 
 const dom_exception_causes = [
 	"Index size error",        #  1
