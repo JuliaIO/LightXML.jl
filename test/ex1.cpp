@@ -75,6 +75,8 @@ int main(int argc, char *argv[])
     printf("\tname = %s\n", safe_str(xdoc->name));
     printf("\tversion = %s\n", xdoc->version);
     printf("\tencoding = %s\n", xdoc->encoding);
+    printf("\tcompression = %d\n", xdoc->compression);
+    printf("\tstandalone = %d\n", xdoc->standalone);
     printf("\n");
     
     // print xml tree

@@ -2,10 +2,10 @@ using MiniDOM
 
 xdoc = parsefile("ex1.xml")
 
-println(version(xdoc))
-println(encoding(xdoc))
-println(compression(xdoc))
-println(standalone(xdoc))
+@assert version(xdoc) == "1.0"
+@assert encoding(xdoc) == "UTF-8"
+@assert compression(xdoc) == 0
+@assert standalone(xdoc) == -2
 
 free(xdoc)
 
