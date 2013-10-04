@@ -6,9 +6,11 @@ module MiniDOM
 	XMLNode, XMLDocument, XMLElement, 
 
 	# nodes
-	AbstractXMLNode,
-	name, nodetype, is_elementnode, is_textnode, is_commentnode, is_cdatanode,
-	XMLNode, XMLNodeIter, children, has_children, content,
+	AbstractXMLNode, 
+	XMLAttr, XMLAttrIter, XMLNode, XMLNodeIter, 
+	name, nodetype, value, content, attribute,
+	is_elementnode, is_textnode, is_commentnode, is_cdatanode,
+	children, has_children, attributes, has_attributes,
 
 	# document
 	parsefile, free, version, encoding, compression, standalone, 

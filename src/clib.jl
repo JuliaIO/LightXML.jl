@@ -13,6 +13,10 @@ const ptrsize = sizeof(Ptr{Void})
 
 @assert ptrsize == sizeof(Uint)
 
+typealias Xchar Uint8
+typealias Xstr Ptr{Xchar}
+typealias Xptr Ptr{Void}
+
 # supporting functions
 
 #
@@ -22,19 +26,13 @@ const ptrsize = sizeof(Ptr{Void})
 @lx2func xmlFree
 _xmlfree{T}(p::Ptr{T}) = ccall(:free, Void, (Ptr{T},), p)  
 
-function _xcopystr(p::Ptr{Uint8}) 
-	if p != nullptr
-		r = bytestring(p)
-		_xmlfree(p)
-		return r
-	else
-		return ""
-	end
-end
+# pre-condition: p is not null
+_xcopystr(p::Xstr) = (r = bytestring(p); _xmlfree(p); r)
 
 # functions for nodes
 
 @lx2func xmlNodeGetContent
+@lx2func xmlGetProp
 
 # functions for documents
 

@@ -57,19 +57,47 @@ immutable _XMLAttrStruct
 	# common part
 	_private::Ptr{Void}
 	nodetype::Cint
-	name::Ptr{Cchar}
-	children::Ptr{Void}
-	last::Ptr{Void}
-	parent::Ptr{Void}
-	next::Ptr{Void}
-	prev::Ptr{Void}
-	doc::Ptr{Void}
+	name::Xstr
+	children::Xptr
+	last::Xptr
+	parent::Xptr
+	next::Xptr
+	prev::Xptr
+	doc::Xptr
 
 	# specific part	
-	ns::Ptr{Void}
+	ns::Xptr
 	atype::Cint
 	psvi::Ptr{Void}
 end
+
+type XMLAttr 
+	ptr::Xptr
+	_struct::_XMLAttrStruct
+
+	function XMLAttr(ptr::Xptr)
+		s = unsafe_load(convert(Ptr{_XMLAttrStruct}, ptr))
+		@assert s.nodetype == XML_ATTRIBUTE_NODE
+		new(ptr, s)
+	end
+end
+
+name(a::XMLAttr) = bytestring(a._struct.name)
+
+function value(a::XMLAttr)
+	pct = ccall(xmlNodeGetContent, Xstr, (Xptr,), a._struct.children)
+	(pct != nullptr ? _xcopystr(pct) : "")::ASCIIString
+end
+
+# iterations
+
+immutable XMLAttrIter
+	p::Xptr
+end
+
+Base.start(it::XMLAttrIter) = it.p
+Base.done(it::XMLAttrIter, p::Xptr) = (p == nullptr)
+Base.next(it::XMLAttrIter, p::Xptr) = (a = XMLAttr(p); (a, a._struct.next))
 
 
 #######################################
@@ -83,28 +111,28 @@ immutable _XMLNodeStruct
 	_private::Ptr{Void}
 	nodetype::Cint
 	name::Ptr{Cchar}
-	children::Ptr{Void}
-	last::Ptr{Void}
-	parent::Ptr{Void}
-	next::Ptr{Void}
-	prev::Ptr{Void}
-	doc::Ptr{Void}
+	children::Xptr
+	last::Xptr
+	parent::Xptr
+	next::Xptr
+	prev::Xptr
+	doc::Xptr
 
 	# specific part
-	ns::Ptr{Void}
-	content::Ptr{Void}
-	attr::Ptr{Void}
-	nsdef::Ptr{Void}
+	ns::Xptr
+	content::Xstr
+	attrs::Xptr
+	nsdef::Xptr
 	psvi::Ptr{Void}
 	line::Cushort
 	extra::Cushort
 end
 
 type XMLNode <: AbstractXMLNode
-	ptr::Ptr{Void}
+	ptr::Xptr
 	_struct::_XMLNodeStruct
 
-	function XMLNode(ptr::Ptr{Void})		
+	function XMLNode(ptr::Xptr)		
 		s = unsafe_load(convert(Ptr{_XMLNodeStruct}, ptr))
 		new(ptr, s)
 	end
@@ -117,18 +145,18 @@ has_children(nd::XMLNode) = (nd._struct.children != nullptr)
 # iteration over children
 
 immutable XMLNodeIter
-	p::Ptr{Void}
+	p::Xptr
 end
 
 Base.start(it::XMLNodeIter) = it.p
-Base.done(it::XMLNodeIter, p::Ptr{Void}) = (p == nullptr)
-Base.next(it::XMLNodeIter, p::Ptr{Void}) = (nd = XMLNode(p); (nd, nd._struct.next))
+Base.done(it::XMLNodeIter, p::Xptr) = (p == nullptr)
+Base.next(it::XMLNodeIter, p::Xptr) = (nd = XMLNode(p); (nd, nd._struct.next))
 
 children(nd::XMLNode) = XMLNodeIter(nd._struct.children) 
 
 function content(nd::XMLNode)
-	pct = ccall(xmlNodeGetContent, Ptr{Uint8}, (Ptr{Void},), nd.ptr)
-	_xcopystr(pct)::ASCIIString
+	pct = ccall(xmlNodeGetContent, Xstr, (Xptr,), nd.ptr)
+	(pct != nullptr ? _xcopystr(pct) : "")::ASCIIString
 end
 
 
@@ -148,20 +176,23 @@ type XMLElement <: AbstractXMLNode
 		new(node)
 	end
 
-	XMLElement(ptr::Ptr{Void}) = XMLElement(XMLNode(ptr))
+	XMLElement(ptr::Xptr) = XMLElement(XMLNode(ptr))
 end
 
 name(x::XMLElement) = name(x.node)
-nodetype(nd::XMLElement) = XML_ELEMENT_NODE
-has_children(nd::XMLElement) = has_children(x.node)
+nodetype(x::XMLElement) = XML_ELEMENT_NODE
+has_children(x::XMLElement) = has_children(x.node)
 children(x::XMLElement) = children(x.node)
 content(x::XMLElement) = content(x.node)
 
+# attribute access
 
+function attribute(x::XMLElement, name::ASCIIString)
+	pv = ccall(xmlGetProp, Xstr, (Xptr, Xstr), x.node.ptr, name)
+	pv != nullptr || throw(XMLAttributeNotFound())
+	_xcopystr(pv)
+end
 
-
-
-
-
-
+has_attributes(x::XMLElement) = (x.node._struct.attrs != nullptr)
+attributes(x::XMLElement) = XMLAttrIter(x.node._struct.attrs)
 

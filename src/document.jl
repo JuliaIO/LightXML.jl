@@ -6,37 +6,37 @@ immutable _XMLDocStruct  # use the same layout as C
 	_private::Ptr{Void}
 	nodetype::Cint
 	name::Ptr{Cchar}
-	children::Ptr{Void}
-	last::Ptr{Void}
-	parent::Ptr{Void}
-	next::Ptr{Void}
-	prev::Ptr{Void}
-	doc::Ptr{Void}
+	children::Xptr
+	last::Xptr
+	parent::Xptr
+	next::Xptr
+	prev::Xptr
+	doc::Xptr
 
 	# specific part
 	compression::Cint
 	standalone::Cint
-	intsubset::Ptr{Void}
-	extsubset::Ptr{Void}
-	oldns::Ptr{Void}
-	version::Ptr{Uint8}
-	encoding::Ptr{Uint8}
+	intsubset::Xptr
+	extsubset::Xptr
+	oldns::Xptr
+	version::Xstr
+	encoding::Xstr
 
 	ids::Ptr{Void}
 	refs::Ptr{Void}
-	url::Ptr{Uint8}
+	url::Xstr
 	charset::Cint
-	dict::Ptr{Void}
+	dict::Xstr
 	psvi::Ptr{Void}
 	parseflags::Cint
 	properties::Cint
 end
 
 type XMLDocument
-	ptr::Ptr{Void}
+	ptr::Xptr
 	_struct::_XMLDocStruct
 
-	function XMLDocument(ptr::Ptr{Void})
+	function XMLDocument(ptr::Xptr)
 		s::_XMLDocStruct = unsafe_load(convert(Ptr{_XMLDocStruct}, ptr))
 
 		# validate integrity
