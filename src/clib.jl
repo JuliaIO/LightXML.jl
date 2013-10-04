@@ -1,6 +1,7 @@
 # C functions in the library
 
 const libxml2 = dlopen("libxml2")
+const libwrapper = dlopen(joinpath(Pkg.dir("MiniDOM"), "deps", "lxwrappers"))
 
 macro lx2func(fname)  # the macro to get functions from libxml2
 	quote
