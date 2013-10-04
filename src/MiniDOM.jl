@@ -13,5 +13,6 @@ module MiniDOM
 	include("types.jl")
 	include("errors.jl")
 
+	include("nodes.jl")
 	include("document.jl")
 end

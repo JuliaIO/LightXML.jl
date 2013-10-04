@@ -7,6 +7,5 @@ end
 
 function free(xdoc::XMLDocument)
 	ccall(xmlFreeDoc, Void, (Ptr{Void},), xdoc.ptr)
-	xdoc.ptr = nullptr
 end
 
