@@ -60,9 +60,15 @@ end
 
 #### parse and free
 
-function parsefile(filename::ASCIIString)
-	p = ccall(xmlParseFile, Ptr{Void}, (Ptr{Cchar},), filename)
+function parse_file(filename::ASCIIString)
+	p = ccall(xmlParseFile, Xptr, (Ptr{Cchar},), filename)
 	p != nullptr || throw(XMLParseError("Failure in parsing an XML file."))
+	XMLDocument(p)
+end
+
+function parse_string(s::ASCIIString)
+	p = ccall(xmlParseMemory, Xptr, (Ptr{Cchar}, Cint), s, length(s) + 1)
+	p != nullptr || throw(XMLParseError("Failure in parsing an XML string."))
 	XMLDocument(p)
 end
 

@@ -39,6 +39,7 @@ _xcopystr(p::Xstr) = (r = bytestring(p); _xmlfree(p); r)
 # functions for documents
 
 @lx2func xmlParseFile
+@lx2func xmlParseMemory
 @lx2func xmlFreeDoc
 @lx2func xmlDocGetRootElement
 
