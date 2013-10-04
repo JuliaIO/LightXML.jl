@@ -8,6 +8,7 @@
 
 #include <cstdio>
 #include <string>
+#include <assert.h>
 #include <libxml/tree.h>
 
 using std::printf;
@@ -54,6 +55,12 @@ void print_xmltree(xmlNodePtr xroot, int level)
 }
 
 
+inline unsigned long pdiff(const void *p0, const void *p1)
+{
+    return (unsigned long)((const char*)p0 - (const char*)p1);
+}
+
+
 int main(int argc, char *argv[])
 {    
     // parse the file into a tree
@@ -61,6 +68,9 @@ int main(int argc, char *argv[])
     
     // print document information
     printf("XML document:\n");
+    printf("struct size = %lu\n", sizeof(*xdoc));
+    assert(xdoc->doc == xdoc);
+
     printf("\ttype = %d\n", xdoc->type);
     printf("\tname = %s\n", safe_str(xdoc->name));
     printf("\tversion = %s\n", xdoc->version);
@@ -70,6 +80,7 @@ int main(int argc, char *argv[])
     // print xml tree
     printf("XML Tree:\n");
     xmlNodePtr xroot = xmlDocGetRootElement(xdoc);
+    assert(xroot == xdoc->children);
     print_xmltree(xroot, 0);
     printf("\n");
     

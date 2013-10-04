@@ -1,5 +1,6 @@
 # XML nodes
 
+abstract AbstractXMLNode
 
 #######################################
 #
@@ -30,9 +31,4 @@ const XINCLUDE_END = 20
 const DOCB_DOCUMENT_NODE = 21
 
 
-#######################################
-#
-#  Generic node interface
-#
-#######################################
 

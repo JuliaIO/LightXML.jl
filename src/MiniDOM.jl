@@ -6,11 +6,10 @@ module MiniDOM
 	XMLNode, XMLDocument, XMLElement, 
 
 	# document
-	parsefile, free
+	parsefile, free, version, encoding, compression, standalone
 
 
 	include("clib.jl")
-	include("types.jl")
 	include("errors.jl")
 
 	include("nodes.jl")

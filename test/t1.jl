@@ -2,7 +2,10 @@ using MiniDOM
 
 xdoc = parsefile("ex1.xml")
 
-println(xdoc)
+println(version(xdoc))
+println(encoding(xdoc))
+println(compression(xdoc))
+println(standalone(xdoc))
 
 free(xdoc)
 
