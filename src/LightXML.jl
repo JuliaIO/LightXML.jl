@@ -1,4 +1,4 @@
-module MiniXML
+module LightXML
 
 	export 
 

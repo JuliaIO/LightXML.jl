@@ -1,5 +1,5 @@
-MiniXML.jl
-==========
+LightXML.jl
+============
 
 This package is a light-weight Julia wrapper of [Libxml2](http://www.xmlsoft.org), which provides a minimal interface that covers functionalities that are commonly needed:
 

@@ -1,4 +1,4 @@
-using MiniXML
+using LightXML
 
 xdoc = XMLDocument()
 
