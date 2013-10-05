@@ -100,8 +100,8 @@ end
 #### output
 
 function save_file(xdoc::XMLDocument, filename::ASCIIString; encoding::ASCIIString="utf-8")
-	ret = ccall(xmlSaveFileEnc, Cint, (Ptr{Cchar}, Xptr, Ptr{Cchar}), 
-		filename, xdoc.ptr, encoding)
+	ret = ccall(xmlSaveFormatFileEnc, Cint, (Ptr{Cchar}, Xptr, Ptr{Cchar}, Cint), 
+		filename, xdoc.ptr, encoding, 1)
 	if ret < 0
 		throw(XMLWriteError("Failed to save XML to file $filename"))
 	end
@@ -111,8 +111,8 @@ end
 function Base.string(xdoc::XMLDocument; encoding::ASCIIString="utf-8")	
 	buf_out = Array(Xstr, 1)
 	len_out = Array(Cint, 1)
-	ccall(xmlDocDumpMemoryEnc, Void, (Xptr, Ptr{Xstr}, Ptr{Cint}, Ptr{Cchar}), 
-		xdoc.ptr, buf_out, len_out, encoding)
+	ccall(xmlDocDumpFormatMemoryEnc, Void, (Xptr, Ptr{Xstr}, Ptr{Cint}, Ptr{Cchar}, Cint), 
+		xdoc.ptr, buf_out, len_out, encoding, 1)
 	_xcopystr(buf_out[1])
 end
 

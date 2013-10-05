@@ -166,7 +166,7 @@ const DEFAULT_DUMPBUFFER_SIZE = 4096
 function Base.string(nd::XMLNode)
 	buf = XBuffer(DEFAULT_DUMPBUFFER_SIZE)
 	ccall(xmlNodeDump, Cint, (Xptr, Xptr, Xptr, Cint, Cint), 
-		buf.ptr, nd._struct.doc, nd.ptr, 0, 0)
+		buf.ptr, nd._struct.doc, nd.ptr, 0, 1)
 	r = content(buf)
 	free(buf)
 	return r

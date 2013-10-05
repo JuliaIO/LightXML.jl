@@ -13,3 +13,9 @@ add_text(xs2, "Illinois")
 set_attribute(xs2, "tag", "MA")
 
 show(xdoc)
+
+show(xroot)
+
+# save_file(xdoc, "tt.xml")
+
+free(xdoc)

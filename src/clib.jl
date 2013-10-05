@@ -58,5 +58,7 @@ _xcopystr(p::Xstr) = (r = bytestring(p); _xmlfree(p); r)
 @lx2func xmlParseFile
 @lx2func xmlParseMemory
 @lx2func xmlDocDumpMemoryEnc
+@lx2func xmlDocDumpFormatMemoryEnc
 @lx2func xmlSaveFileEnc
+@lx2func xmlSaveFormatFileEnc
 
