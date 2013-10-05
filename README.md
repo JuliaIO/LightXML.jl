@@ -17,11 +17,12 @@ Pkg.add("LightXML")
 
 **Node:** This package relies on the library *libxml2* to work, which is shipped with Mac OS X and many Linux systems. So this package may work out of the box. If not, you may check whether *libxml2* has been in your system and whether *libxml2.so* (for Linux) or *libxml2.dylib* (for Mac) is on your library search path.
 
+
 ### Examples
 
 The following examples show how you may use this package to accomplish common tasks.
 
-##### Read an XML file
+#### Read an XML file
 
 Suppose you have an XML file ``ex1.xml`` as below
 
@@ -106,4 +107,72 @@ end
 ```
 
 **Node:** The functions ``child_nodes``, ``child_elements``, and ``attributes`` return light weight iterators -- so that one can use them with for-loop. To get an array of all items, one may use the ``collect`` function provided by Julia.
+
+
+#### Create an XML Document 
+
+This package allows you to construct an XML document programmatically. For example, to create an XML document as
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<States>
+  <State tag="MA">Massachusetts</State>
+  <State tag="MA">Illinois</State>
+</States>
+```
+
+You may write:
+
+```julia
+# create an empty XML document
+xdoc = XMLDocument()
+
+# create & attach a root node
+xroot = create_root(xdoc, "States")
+
+# create the first child
+xs1 = new_child(xroot, "State")
+
+# add the inner content
+add_text(xs1, "Massachusetts")
+
+# set attribute
+set_attribute(xs1, "tag", "MA")
+
+# likewise for the second child
+xs2 = new_child(xroot, "State")
+add_text(xs2, "Illinois")
+set_attribute(xs2, "tag", "MA")
+```
+
+#### Export an XML file
+
+With this package, you can easily export an XML file to a string or a file, or show it on the console, as
+
+```julia
+# save to an XML file
+save_file(xdoc, "f1.xml") 
+
+# output to a string
+s = string(xdoc)
+
+# print to the console (in a pretty format as in an XML file)
+print(xdoc)  
+```
+
+**Node:** the ``string`` and ``show`` functions are specialized for both ``XMLDocument`` and ``XMLElement``. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
