@@ -45,6 +45,12 @@ type XMLDocument
 
 		new(ptr, s)
 	end
+
+	function XMLDocument()
+		# create an empty document
+		ptr = ccall(xmlNewDoc, Xptr, (Ptr{Cchar},), "1.0")
+		XMLDocument(ptr)	
+	end
 end
 
 version(xdoc::XMLDocument) = bytestring(xdoc._struct.version)
@@ -52,7 +58,7 @@ encoding(xdoc::XMLDocument) = bytestring(xdoc._struct.encoding)
 compression(xdoc::XMLDocument) = int(xdoc._struct.compression)
 standalone(xdoc::XMLDocument) = int(xdoc._struct.standalone)
 
-function docelement(xdoc::XMLDocument)
+function root(xdoc::XMLDocument)
 	pr = ccall(xmlDocGetRootElement, Ptr{Void}, (Ptr{Void},), xdoc.ptr)
 	pr != nullptr || throw(XMLNoRootError())
 	XMLElement(pr)
@@ -66,6 +72,15 @@ function free(xdoc::XMLDocument)
 	xdoc.ptr = nullptr
 end
 
+function set_root(xdoc::XMLDocument, xroot::XMLElement)
+	ccall(xmlDocSetRootElement, Xptr, (Xptr, Xptr), xdoc.ptr, xroot.node.ptr)
+end
+
+function create_root(xdoc::XMLDocument, name::ASCIIString)
+	xroot = new_element(name)
+	set_root(xdoc, xroot)
+	return xroot
+end
 
 #### parse and free
 

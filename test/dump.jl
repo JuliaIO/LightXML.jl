@@ -30,7 +30,7 @@ show(xdoc)
 
 println("Root Element:")
 println("=====================")
-xroot = docelement(xdoc)
+xroot = root(xdoc)
 show(xroot)
 
 free(xdoc)

@@ -13,9 +13,11 @@ module MiniDOM
 	child_nodes, has_children, attributes, has_attributes, child_elements,
 	find_element, get_elements_by_tagname,
 
+	new_node, add_child, new_child, add_text, set_attribute,
+
 	# document
-	XMLDocument, version, encoding, compression, standalone, docelement, 
-	parse_file, parse_string, save_file
+	XMLDocument, version, encoding, compression, standalone, root, 
+	parse_file, parse_string, save_file, set_root, create_root
 	
 
 	include("clib.jl")

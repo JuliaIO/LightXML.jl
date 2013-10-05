@@ -249,3 +249,41 @@ function get_elements_by_tagname(x::XMLElement, n::ASCIIString)
 	return lst
 end
 
+
+#######################################
+#
+#  XML Tree Construction
+#
+#######################################
+
+function new_element(name::ASCIIString)
+	p = ccall(xmlNewNode, Xptr, (Xptr, Xstr), nullptr, name)
+	XMLElement(p)
+end
+
+function add_child(xparent::XMLElement, xchild::XMLNode)
+	p = ccall(xmlAddChild, Xptr, (Xptr, Xptr), xparent.node.ptr, xchild.ptr)
+	p != nullptr || throw(XMLTreeError("Failed to add a child node."))
+end
+
+add_child(xparent::XMLElement, xchild::XMLElement) = add_child(xparent, xchild.node)
+
+function new_child(xparent::XMLElement, name::ASCIIString)
+	xc = new_element(name)
+	add_child(xparent, xc)
+	return xc
+end
+
+function new_textnode(txt::ASCIIString)
+	p = ccall(xmlNewText, Xptr, (Xstr,), txt)
+	XMLNode(p)
+end
+
+add_text(x::XMLElement, txt::ASCIIString) = add_child(x, new_textnode(txt))
+
+function set_attribute(x::XMLElement, name::ASCIIString, val::ASCIIString)
+	a = ccall(xmlSetProp, Xptr, (Xptr, Xstr, Xstr), x.node.ptr, name, val)
+	return XMLAttr(a)
+end
+
+

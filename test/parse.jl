@@ -30,7 +30,7 @@ xdoc = parse_string(docstr)
 
 # root node
 
-xroot = docelement(xdoc)
+xroot = root(xdoc)
 
 @test isa(xroot, XMLElement)
 @test is_elementnode(xroot)
