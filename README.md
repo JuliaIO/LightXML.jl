@@ -15,7 +15,7 @@ Like other Julia packages, you may checkout *LightXML* from METADATA repo, as
 Pkg.add("LightXML")
 ```
 
-**Node:** This package relies on the library *libxml2* to work, which is shipped with Mac OS X and many Linux systems. So this package may work out of the box. If not, you may check whether *libxml2* has been in your system and whether *libxml2.so* (for Linux) or *libxml2.dylib* (for Mac) is on your library search path.
+**Note:** This package relies on the library *libxml2* to work, which is shipped with Mac OS X and many Linux systems. So this package may work out of the box. If not, you may check whether *libxml2* has been in your system and whether *libxml2.so* (for Linux) or *libxml2.dylib* (for Mac) is on your library search path.
 
 
 ### Examples
@@ -106,7 +106,7 @@ for a in attributes(e)  # a is an instance of
 end
 ```
 
-**Node:** The functions ``child_nodes``, ``child_elements``, and ``attributes`` return light weight iterators -- so that one can use them with for-loop. To get an array of all items, one may use the ``collect`` function provided by Julia.
+**Note:** The functions ``child_nodes``, ``child_elements``, and ``attributes`` return light weight iterators -- so that one can use them with for-loop. To get an array of all items, one may use the ``collect`` function provided by Julia.
 
 
 #### Create an XML Document 
@@ -117,7 +117,7 @@ This package allows you to construct an XML document programmatically. For examp
 <?xml version="1.0" encoding="utf-8"?>
 <States>
   <State tag="MA">Massachusetts</State>
-  <State tag="MA">Illinois</State>
+  <State tag="IL">Illinois</State>
 </States>
 ```
 
@@ -142,7 +142,7 @@ set_attribute(xs1, "tag", "MA")
 # likewise for the second child
 xs2 = new_child(xroot, "State")
 add_text(xs2, "Illinois")
-set_attribute(xs2, "tag", "MA")
+set_attribute(xs2, "tag", "IL")
 ```
 
 #### Export an XML file
@@ -160,19 +160,96 @@ s = string(xdoc)
 print(xdoc)  
 ```
 
-**Node:** the ``string`` and ``show`` functions are specialized for both ``XMLDocument`` and ``XMLElement``. 
+**Note:** the ``string`` and ``show`` functions are specialized for both ``XMLDocument`` and ``XMLElement``. 
 
 
+### Types
+
+Main types of this package
+
+* ``XMLDocument``: represent an XML document (in a tree)
+* ``XMLElement``: represent an XML element (``child_elements`` give you this)
+* ``XMLNode``: represent a generic XML node (``child_nodes`` give you this)
+* ``XMLAttr``: represent an XML attribute
+
+Note that one if an ``XMLNode`` instance ``x`` is actually an element node, one may construct an ``XMLElement`` instance by ``XMLElement(x)``.
 
 
+### API Functions
+
+A list of API functions:
 
 
+##### Functions to access an XML tree
 
+```julia
+# Let xdoc be a document, x be a node/element, e be an element
 
+root(xdoc)    # get the root element of a document
 
+nodetype(x)   # get an integer indicating the node type
+name(x)       # get the name of a node/element
+content(x)    # get text content of a node/element
+              # if x is an element, this returns all text (concatenated) within x
 
+is_elementnode(x)   # whether x is an element node
+is_textnode(x)      # whether x is a text node
+is_cdatanode(x)     # whether x is a CDATA node
+is_commentnode(x)   # whether x is a comment node
 
+has_children(e)      # whether e has child nodes
+has_attributes(e)    # whether e has attributes 
 
+child_nodes(x)       # iterator of all child nodes of a node/element x
+child_elements(e)    # iterator of all child elements of e
+attributes(e)        # iterator of all attributes of e
+attribute(e, name)   # get the value of a named attribute
 
+find_element(e, name)   # the first element of specified name under e
+                        # return nothing is no such an element is found
 
+get_elements_by_tagname(e, name)  # a list of all child elements of e with
+                                  # the specified name 
 
+string(e)      # Format an XML element into a string
+show(io, e)    # output formatted XML element
+```
+
+##### Functions to create an XML document
+
+```julia
+xdoc = XMLDocument()     # create an empty XML document
+
+e = new_element(name)    # create a new XML element 
+                         # this does not attach e to a tree
+
+t = new_textnode(content)   # create a new text node
+                            # this does not attach t to a tree
+
+set_root(xdoc, e)        # set element e as the root of xdoc
+add_child(parent, x)     # add x as a child of a parent element
+
+e = create_root(xdoc, name)  # create a root element and set it as root 
+                             # equiv. to new_element + set_root
+
+e = new_child(parent, name)  # create a new element and add it as a child
+                             # equiv. to new_element + add_child
+
+add_text(e, text)    # add text content to an element
+                     # equiv. to new_textnode + add_child
+
+set_attribute(e, name, value)  # set an attribute of an element
+                               # this returns the added attribute 
+                               # as an instance of XMLAttr
+```
+
+##### Functions to work with a document
+
+```julia
+xdoc = parse_file(filename)    # parse an XML file
+xdoc = parse_string(str)       # parse an XML doc from a string
+save_file(xdoc, filename)      # save xdoc to an XML file
+
+string(xdoc)     # Formatted XML doc to a string
+show(io, xdoc)   # output formatted XML document
+```
