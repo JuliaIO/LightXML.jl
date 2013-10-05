@@ -12,10 +12,14 @@ xs2 = new_child(xroot, "State")
 add_text(xs2, "Illinois")
 set_attribute(xs2, "tag", "MA")
 
-show(xdoc)
+rtxt = """
+<?xml version="1.0" encoding="utf-8"?>
+<States>
+  <State tag="MA">Massachusetts</State>
+  <State tag="MA">Illinois</State>
+</States>
+"""
 
-show(xroot)
-
-# save_file(xdoc, "tt.xml")
+@assert strip(string(xdoc)) == strip(rtxt)
 
 free(xdoc)

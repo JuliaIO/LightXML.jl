@@ -4,7 +4,7 @@ using Base.Test
 # document
 
 docstr = """
-<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <bookstore>
   <book category="COOKING" tag="first">
     <title lang="en">Everyday Italian</title>
