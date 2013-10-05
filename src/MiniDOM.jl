@@ -14,13 +14,14 @@ module MiniDOM
 	find_element, get_elements_by_tagname,
 
 	# document
-	XMLDocument,
-	parse_file, parse_string, version, encoding, compression, standalone, 
-	docelement
+	XMLDocument, version, encoding, compression, standalone, docelement, 
+	parse_file, parse_string, save_file
+	
 
 	include("clib.jl")
 	include("errors.jl")
 
+	include("utils.jl")
 	include("nodes.jl")
 	include("document.jl")
 end

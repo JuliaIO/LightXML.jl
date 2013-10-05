@@ -11,6 +11,10 @@ end
 immutable XMLAttributeNotFound <: XMLError
 end
 
+immutable XMLWriteError <: XMLError
+	msg::ASCIIString
+end
+
 const dom_exception_causes = [
 	"Index size error",        #  1
 	"DOM string size error",   #  2

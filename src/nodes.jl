@@ -159,6 +159,23 @@ function content(nd::XMLNode)
 	(pct != nullptr ? _xcopystr(pct) : "")::ASCIIString
 end
 
+# dumping
+
+const DEFAULT_DUMPBUFFER_SIZE = 4096
+
+function Base.string(nd::XMLNode)
+	buf = XBuffer(DEFAULT_DUMPBUFFER_SIZE)
+	ccall(xmlNodeDump, Cint, (Xptr, Xptr, Xptr, Cint, Cint), 
+		buf.ptr, nd._struct.doc, nd.ptr, 0, 0)
+	r = content(buf)
+	free(buf)
+	return r
+end
+
+function Base.show(io::IO, nd::XMLNode)
+	println(io, Base.string(nd))
+end
+
 
 #######################################
 #
@@ -184,6 +201,9 @@ nodetype(x::XMLElement) = XML_ELEMENT_NODE
 has_children(x::XMLElement) = has_children(x.node)
 child_nodes(x::XMLElement) = child_nodes(x.node)
 content(x::XMLElement) = content(x.node)
+
+Base.string(x::XMLElement) = Base.string(x.node)
+Base.show(io::IO, x::XMLElement) = Base.show(x.node)
 
 # attribute access
 

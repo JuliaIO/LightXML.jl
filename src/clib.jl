@@ -29,18 +29,27 @@ _xmlfree{T}(p::Ptr{T}) = ccall(:free, Void, (Ptr{T},), p)
 # pre-condition: p is not null
 _xcopystr(p::Xstr) = (r = bytestring(p); _xmlfree(p); r)
 
+# buffer
+
+@lx2func xmlBufferCreateSize
+@lx2func xmlBufferFree
+@lx2func xmlBufferLength
+@lx2func xmlBufferContent
+
 # functions for nodes
 
 @lx2func xmlNodeGetContent
 @lx2func xmlGetProp
 @lx2func xmlFirstElementChild
 @lx2func xmlNextElementSibling
+@lx2func xmlNodeDump
 
 # functions for documents
 
+@lx2func xmlDocGetRootElement
+@lx2func xmlFreeDoc
 @lx2func xmlParseFile
 @lx2func xmlParseMemory
-@lx2func xmlFreeDoc
-@lx2func xmlDocGetRootElement
-
+@lx2func xmlDocDumpMemoryEnc
+@lx2func xmlSaveFileEnc
 

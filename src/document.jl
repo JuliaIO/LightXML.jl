@@ -58,6 +58,15 @@ function docelement(xdoc::XMLDocument)
 	XMLElement(pr)
 end
 
+
+#### construction & free
+
+function free(xdoc::XMLDocument)
+	ccall(xmlFreeDoc, Void, (Ptr{Void},), xdoc.ptr)
+	xdoc.ptr = nullptr
+end
+
+
 #### parse and free
 
 function parse_file(filename::ASCIIString)
@@ -72,8 +81,26 @@ function parse_string(s::ASCIIString)
 	XMLDocument(p)
 end
 
-function free(xdoc::XMLDocument)
-	ccall(xmlFreeDoc, Void, (Ptr{Void},), xdoc.ptr)
-	xdoc.ptr = nullptr
+
+#### output
+
+function save_file(xdoc::XMLDocument, filename::ASCIIString; encoding::ASCIIString="utf-8")
+	ret = ccall(xmlSaveFileEnc, Cint, (Ptr{Cchar}, Xptr, Ptr{Cchar}), 
+		filename, xdoc.ptr, encoding)
+	if ret < 0
+		throw(XMLWriteError("Failed to save XML to file $filename"))
+	end
+	return int(ret)  # number of bytes written
 end
+
+function Base.string(xdoc::XMLDocument; encoding::ASCIIString="utf-8")	
+	buf_out = Array(Xstr, 1)
+	len_out = Array(Cint, 1)
+	ccall(xmlDocDumpMemoryEnc, Void, (Xptr, Ptr{Xstr}, Ptr{Cint}, Ptr{Cchar}), 
+		xdoc.ptr, buf_out, len_out, encoding)
+	_xcopystr(buf_out[1])
+end
+
+Base.show(io::IO, xdoc::XMLDocument) = println(io, Base.string(xdoc))
+
 
