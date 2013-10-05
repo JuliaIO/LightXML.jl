@@ -142,6 +142,10 @@ name(nd::XMLNode) = bytestring(nd._struct.name)
 nodetype(nd::XMLNode) = nd._struct.nodetype
 has_children(nd::XMLNode) = (nd._struct.children != nullptr)
 
+# whether it is a white-space only text node
+is_blanknode(nd::XMLNode) = bool(ccall(xmlIsBlankNode, Cint, (Xptr,), nd.ptr))
+
+
 # iteration over children
 
 immutable XMLNodeIter
@@ -207,10 +211,22 @@ Base.show(io::IO, x::XMLElement) = Base.show(x.node)
 
 # attribute access
 
-function attribute(x::XMLElement, name::ASCIIString)
+function attribute(x::XMLElement, name::ASCIIString; required::Bool=false)
 	pv = ccall(xmlGetProp, Xstr, (Xptr, Xstr), x.node.ptr, name)
-	pv != nullptr || throw(XMLAttributeNotFound())
-	_xcopystr(pv)
+	if pv != nullptr
+		return _xcopystr(pv)
+	else
+		if required
+			throw(XMLAttributeNotFound())
+		else
+			return nothing
+		end
+	end
+end
+
+function has_attribute(x::XMLElement, name::ASCIIString)
+	p = ccall(xmlHasProp, Xptr, (Xptr, Xstr), x.node.ptr, name)
+	return p != nullptr
 end
 
 has_attributes(x::XMLElement) = (x.node._struct.attrs != nullptr)

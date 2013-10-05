@@ -52,8 +52,15 @@ rcs = collect(child_nodes(xroot))
 @test is_textnode(rcs[3])
 @test is_textnode(rcs[5])
 
+@test is_blanknode(rcs[1])
+@test is_blanknode(rcs[3])
+@test is_blanknode(rcs[5])
+
 @test is_elementnode(rcs[2])
 @test is_elementnode(rcs[4])
+
+@test !is_blanknode(rcs[2])
+@test !is_blanknode(rcs[4])
 
 xb1 = XMLElement(rcs[2])
 
@@ -83,7 +90,12 @@ xb2 = XMLElement(rcs[4])
 @test nodetype(xb2) == 1
 @test has_attributes(xb2)
 @test has_children(xb2)
+@test has_attribute(xb2, "category")
 @test attribute(xb2, "category") == "CHILDREN"
+
+@test !has_attribute(xb2, "wrongattr")
+@test is(attribute(xb2, "wrongattr"), nothing)
+@test_throws attribute(xb2, "wrongattr"; required=true)
 
 rces = get_elements_by_tagname(xroot, "book")
 @test length(rces) == 2

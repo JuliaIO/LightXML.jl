@@ -203,7 +203,14 @@ has_attributes(e)    # whether e has attributes
 child_nodes(x)       # iterator of all child nodes of a node/element x
 child_elements(e)    # iterator of all child elements of e
 attributes(e)        # iterator of all attributes of e
-attribute(e, name)   # get the value of a named attribute
+
+has_attribute(e, name)  # whether a named attribute exists for e
+
+# get the value of a named attribute
+# when the attribute does not exist, it either 
+# throws an exception (when required is true)
+# or returns nothing (when required is false)
+attribute(e, name; required=false)                                         
 
 find_element(e, name)   # the first element of specified name under e
                         # return nothing is no such an element is found

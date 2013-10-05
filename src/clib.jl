@@ -39,10 +39,12 @@ _xcopystr(p::Xstr) = (r = bytestring(p); _xmlfree(p); r)
 # functions for nodes
 
 @lx2func xmlNodeGetContent
+@lx2func xmlHasProp
 @lx2func xmlGetProp
 @lx2func xmlFirstElementChild
 @lx2func xmlNextElementSibling
 @lx2func xmlNodeDump
+@lx2func xmlIsBlankNode
 
 @lx2func xmlNewNode
 @lx2func xmlAddChild
