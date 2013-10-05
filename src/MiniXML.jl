@@ -1,4 +1,4 @@
-module MiniDOM
+module MiniXML
 
 	export 
 

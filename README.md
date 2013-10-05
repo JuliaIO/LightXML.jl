@@ -1,4 +1,4 @@
-MiniDOM.jl
+MiniXML.jl
 ==========
 
 A minimal interface for XML Dom based on libxml2

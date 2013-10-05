@@ -1,4 +1,4 @@
-using MiniDOM
+using MiniXML
 using Base.Test
 
 # document
