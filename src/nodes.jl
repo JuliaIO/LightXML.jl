@@ -315,4 +315,17 @@ function set_attribute(x::XMLElement, name::ASCIIString, val::ASCIIString)
 	return XMLAttr(a)
 end
 
+function set_attributes{P<:NTuple{2}}(x::XMLElement, attrs::AbstractArray{P})
+	for (nam, val) in attrs		
+		set_attribute(x, string(nam), string(val))
+	end
+end
+
+set_attributes(x::XMLElement, attrs::Associative) = set_attributes(x, collect(attrs))
+
+function set_attributes(x::XMLElement; attrs...) 
+	for (nam, val) in attrs
+		set_attribute(x, string(nam), string(val))
+	end
+end
 

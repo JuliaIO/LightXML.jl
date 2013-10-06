@@ -110,7 +110,7 @@ Another way to access attributes is to turn them into a dictionary using ``attri
 
 ```julia
 ad = attributes_dict(e1)  
-v = (ad["lang"])  # v <-- "en"
+v = ad["lang"]  # v <-- "en"
 ```
 
 **Note:** The functions ``child_nodes``, ``child_elements``, and ``attributes`` return light weight iterators -- so that one can use them with for-loop. To get an array of all items, one may use the ``collect`` function provided by Julia.
@@ -124,7 +124,8 @@ This package allows you to construct an XML document programmatically. For examp
 <?xml version="1.0" encoding="utf-8"?>
 <States>
   <State tag="MA">Massachusetts</State>
-  <State tag="IL">Illinois</State>
+  <State tag="IL" cap="Springfield">Illinois</State>
+  <State tag="CA" cap="Sacramento">California</State>
 </States>
 ```
 
@@ -149,7 +150,14 @@ set_attribute(xs1, "tag", "MA")
 # likewise for the second child
 xs2 = new_child(xroot, "State")
 add_text(xs2, "Illinois")
-set_attribute(xs2, "tag", "IL")
+# set multiple attributes using a dict
+set_attributes(xs2, {"tag"=>"IL", "cap"=>"Springfield"})
+
+# now, the thrid child
+xs3 = new_child(xroot, "State")
+add_text(xs3, "California")
+# set attributes using keyword arguments
+set_attributes(xs3; tag="CA", cap="Sacramento")
 ```
 
 #### Export an XML file
@@ -258,6 +266,13 @@ add_text(e, text)    # add text content to an element
 set_attribute(e, name, value)  # set an attribute of an element
                                # this returns the added attribute 
                                # as an instance of XMLAttr
+
+set_attributes(e, attrs)   # set multiple attributes in one call
+                           # attrs can be a dictionary or 
+                           # a list of pairs as (name, value)    
+
+# one can also use keyword arguments to set attributes to an element
+set_attributes(e, key1="val1", key2="val2", ...)                                                      
 ```
 
 ##### Functions to work with a document

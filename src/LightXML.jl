@@ -13,7 +13,7 @@ module LightXML
 	child_nodes, has_children, attributes, has_attributes, attributes_dict,
 	child_elements, find_element, get_elements_by_tagname,
 
-	new_node, add_child, new_child, add_text, set_attribute,
+	new_node, add_child, new_child, add_text, set_attribute, set_attributes,
 
 	# document
 	XMLDocument, version, encoding, compression, standalone, root, 
