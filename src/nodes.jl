@@ -232,6 +232,19 @@ end
 has_attributes(x::XMLElement) = (x.node._struct.attrs != nullptr)
 attributes(x::XMLElement) = XMLAttrIter(x.node._struct.attrs)
 
+function attributes_dict(x::XMLElement)
+	# make an dictionary based on attributes
+
+	dct = (ASCIIString=>ASCIIString)[]
+	if has_attributes(x)
+		for a in attributes(x)
+			dct[name(a)] = value(a)
+		end
+	end
+	return dct
+end
+
+
 # element access
 
 immutable XMLElementIter

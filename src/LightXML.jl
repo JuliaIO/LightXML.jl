@@ -10,8 +10,8 @@ module LightXML
 	XMLAttr, XMLAttrIter, XMLNode, XMLNodeIter, XMLElement, XMLElementIter,
 	nodetype, value, content, attribute, has_attribute,
 	is_elementnode, is_textnode, is_commentnode, is_cdatanode, is_blanknode,
-	child_nodes, has_children, attributes, has_attributes, child_elements,
-	find_element, get_elements_by_tagname,
+	child_nodes, has_children, attributes, has_attributes, attributes_dict,
+	child_elements, find_element, get_elements_by_tagname,
 
 	new_node, add_child, new_child, add_text, set_attribute,
 

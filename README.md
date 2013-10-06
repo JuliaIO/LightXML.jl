@@ -99,11 +99,18 @@ r = content(t)  # r <- "Everyday Italian"
 One can also traverse all attributes of an element ``e`` as
 
 ```julia
-for a in attributes(e)  # a is an instance of 
+for a in attributes(e)  # a is an instance of XMLAttr
 	n = name(a)
 	v = value(a)
 	println("$n = $v")
 end
+```
+
+Another way to access attributes is to turn them into a dictionary using ``attributes_dict``, as
+
+```julia
+ad = attributes_dict(e1)  
+v = (ad["lang"])  # v <-- "en"
 ```
 
 **Note:** The functions ``child_nodes``, ``child_elements``, and ``attributes`` return light weight iterators -- so that one can use them with for-loop. To get an array of all items, one may use the ``collect`` function provided by Julia.
@@ -203,6 +210,9 @@ has_attributes(e)    # whether e has attributes
 child_nodes(x)       # iterator of all child nodes of a node/element x
 child_elements(e)    # iterator of all child elements of e
 attributes(e)        # iterator of all attributes of e
+
+attributes_dict(e)   # a dictionary of all attributes of e, 
+                     # which maps names to corresponding values
 
 has_attribute(e, name)  # whether a named attribute exists for e
 

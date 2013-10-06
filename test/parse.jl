@@ -84,6 +84,11 @@ b1a2 = b1as[2]
 @test name(b1a2) == "tag"
 @test value(b1a2) == "first"
 
+adct = attributes_dict(xb1)
+@test length(adct) == 2
+@test adct["category"] == "COOKING"
+@test adct["tag"] == "first"
+
 xb2 = XMLElement(rcs[4])
 
 @test name(xb2) == "book"
