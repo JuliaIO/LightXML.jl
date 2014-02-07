@@ -2,7 +2,7 @@
 abstract XMLError 
 
 immutable XMLParseError <: XMLError
-	msg::ASCIIString
+	msg::String
 end
 
 immutable XMLNoRootError <: XMLError
@@ -12,11 +12,11 @@ immutable XMLAttributeNotFound <: XMLError
 end
 
 immutable XMLWriteError <: XMLError
-	msg::ASCIIString
+	msg::String
 end
 
 immutable XMLTreeError <: XMLError
-	msg::ASCIIString
+	msg::String
 end
 
 const dom_exception_causes = [
@@ -35,7 +35,7 @@ const dom_exception_causes = [
 
 immutable DOMException <: XMLError
 	code::Int
-	cause::ASCIIString
+	cause::String
 
 	DOMException(code::Int) = new(code, dom_exception_causes[code])
 end

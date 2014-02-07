@@ -76,7 +76,7 @@ function set_root(xdoc::XMLDocument, xroot::XMLElement)
 	ccall(xmlDocSetRootElement, Xptr, (Xptr, Xptr), xdoc.ptr, xroot.node.ptr)
 end
 
-function create_root(xdoc::XMLDocument, name::ASCIIString)
+function create_root(xdoc::XMLDocument, name::String)
 	xroot = new_element(name)
 	set_root(xdoc, xroot)
 	return xroot
@@ -84,14 +84,14 @@ end
 
 #### parse and free
 
-function parse_file(filename::ASCIIString)
+function parse_file(filename::String)
 	p = ccall(xmlParseFile, Xptr, (Ptr{Cchar},), filename)
 	p != nullptr || throw(XMLParseError("Failure in parsing an XML file."))
 	XMLDocument(p)
 end
 
-function parse_string(s::ASCIIString)
-	p = ccall(xmlParseMemory, Xptr, (Ptr{Cchar}, Cint), s, length(s) + 1)
+function parse_string(s::String)
+	p = ccall(xmlParseMemory, Xptr, (Ptr{Cchar}, Cint), s, sizeof(s) + 1)
 	p != nullptr || throw(XMLParseError("Failure in parsing an XML string."))
 	XMLDocument(p)
 end
@@ -99,7 +99,7 @@ end
 
 #### output
 
-function save_file(xdoc::XMLDocument, filename::ASCIIString; encoding::ASCIIString="utf-8")
+function save_file(xdoc::XMLDocument, filename::String; encoding::String="utf-8")
 	ret = ccall(xmlSaveFormatFileEnc, Cint, (Ptr{Cchar}, Xptr, Ptr{Cchar}, Cint), 
 		filename, xdoc.ptr, encoding, 1)
 	if ret < 0
@@ -108,7 +108,7 @@ function save_file(xdoc::XMLDocument, filename::ASCIIString; encoding::ASCIIStri
 	return int(ret)  # number of bytes written
 end
 
-function Base.string(xdoc::XMLDocument; encoding::ASCIIString="utf-8")	
+function Base.string(xdoc::XMLDocument; encoding::String="utf-8")	
 	buf_out = Array(Xstr, 1)
 	len_out = Array(Cint, 1)
 	ccall(xmlDocDumpFormatMemoryEnc, Void, (Xptr, Ptr{Xstr}, Ptr{Cint}, Ptr{Cchar}, Cint), 

@@ -86,7 +86,7 @@ name(a::XMLAttr) = bytestring(a._struct.name)
 
 function value(a::XMLAttr)
 	pct = ccall(xmlNodeGetContent, Xstr, (Xptr,), a._struct.children)
-	(pct != nullptr ? _xcopystr(pct) : "")::ASCIIString
+	(pct != nullptr ? _xcopystr(pct) : "")::String
 end
 
 # iterations
@@ -160,7 +160,7 @@ child_nodes(nd::XMLNode) = XMLNodeIter(nd._struct.children)
 
 function content(nd::XMLNode)
 	pct = ccall(xmlNodeGetContent, Xstr, (Xptr,), nd.ptr)
-	(pct != nullptr ? _xcopystr(pct) : "")::ASCIIString
+	(pct != nullptr ? _xcopystr(pct) : "")::String
 end
 
 # dumping
@@ -211,7 +211,7 @@ Base.show(io::IO, x::XMLElement) = Base.show(x.node)
 
 # attribute access
 
-function attribute(x::XMLElement, name::ASCIIString; required::Bool=false)
+function attribute(x::XMLElement, name::String; required::Bool=false)
 	pv = ccall(xmlGetProp, Xstr, (Xptr, Xstr), x.node.ptr, name)
 	if pv != nullptr
 		return _xcopystr(pv)
@@ -224,7 +224,7 @@ function attribute(x::XMLElement, name::ASCIIString; required::Bool=false)
 	end
 end
 
-function has_attribute(x::XMLElement, name::ASCIIString)
+function has_attribute(x::XMLElement, name::String)
 	p = ccall(xmlHasProp, Xptr, (Xptr, Xstr), x.node.ptr, name)
 	return p != nullptr
 end
@@ -235,7 +235,7 @@ attributes(x::XMLElement) = XMLAttrIter(x.node._struct.attrs)
 function attributes_dict(x::XMLElement)
 	# make an dictionary based on attributes
 
-	dct = (ASCIIString=>ASCIIString)[]
+	dct = (String=>String)[]
 	if has_attributes(x)
 		for a in attributes(x)
 			dct[name(a)] = value(a)
@@ -259,7 +259,7 @@ child_elements(x::XMLElement) = XMLElementIter(x.node.ptr)
 
 # elements by tag name
 
-function find_element(x::XMLElement, n::ASCIIString)
+function find_element(x::XMLElement, n::String)
 	for c in child_elements(x)
 		if name(c) == n
 			return c
@@ -268,7 +268,7 @@ function find_element(x::XMLElement, n::ASCIIString)
 	return nothing
 end
 
-function get_elements_by_tagname(x::XMLElement, n::ASCIIString)
+function get_elements_by_tagname(x::XMLElement, n::String)
 	lst = Array(XMLElement, 0)
 	for c in child_elements(x)
 		if name(c) == n
@@ -285,7 +285,7 @@ end
 #
 #######################################
 
-function new_element(name::ASCIIString)
+function new_element(name::String)
 	p = ccall(xmlNewNode, Xptr, (Xptr, Xstr), nullptr, name)
 	XMLElement(p)
 end
@@ -297,25 +297,25 @@ end
 
 add_child(xparent::XMLElement, xchild::XMLElement) = add_child(xparent, xchild.node)
 
-function new_child(xparent::XMLElement, name::ASCIIString)
+function new_child(xparent::XMLElement, name::String)
 	xc = new_element(name)
 	add_child(xparent, xc)
 	return xc
 end
 
-function new_textnode(txt::ASCIIString)
+function new_textnode(txt::String)
 	p = ccall(xmlNewText, Xptr, (Xstr,), txt)
 	XMLNode(p)
 end
 
-add_text(x::XMLElement, txt::ASCIIString) = add_child(x, new_textnode(txt))
+add_text(x::XMLElement, txt::String) = add_child(x, new_textnode(txt))
 
-function set_attribute(x::XMLElement, name::ASCIIString, val::ASCIIString)
+function set_attribute(x::XMLElement, name::String, val::String)
 	a = ccall(xmlSetProp, Xptr, (Xptr, Xstr, Xstr), x.node.ptr, name, val)
 	return XMLAttr(a)
 end
 
-set_attribute(x::XMLElement, name::ASCIIString, val) = set_attribute(x, name, string(val))
+set_attribute(x::XMLElement, name::String, val) = set_attribute(x, name, string(val))
 
 function set_attributes{P<:NTuple{2}}(x::XMLElement, attrs::AbstractArray{P})
 	for (nam, val) in attrs		
