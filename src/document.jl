@@ -91,7 +91,7 @@ function parse_file(filename::String)
 end
 
 function parse_string(s::String)
-	p = ccall(xmlParseMemory, Xptr, (Ptr{Cchar}, Cint), s, length(s) + 1)
+	p = ccall(xmlParseMemory, Xptr, (Ptr{Cchar}, Cint), s, sizeof(s) + 1)
 	p != nullptr || throw(XMLParseError("Failure in parsing an XML string."))
 	XMLDocument(p)
 end
