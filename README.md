@@ -47,7 +47,7 @@ Suppose you have an XML file ``ex1.xml`` as below
 Here is the code to parse this file:
 
 ```julia
-using MiniXML
+using LightXML
 
 # parse ex1.xml:
 # xdoc is an instance of XMLDocument, which maintains a tree structure  
