@@ -263,6 +263,9 @@ e = new_child(parent, name)  # create a new element and add it as a child
 add_text(e, text)    # add text content to an element
                      # equiv. to new_textnode + add_child
 
+add_cdata(xdoc, e, text)    # add text content to an element
+                            # equiv. to new_cdatanode + add_child
+
 set_attribute(e, name, value)  # set an attribute of an element
                                # this returns the added attribute 
                                # as an instance of XMLAttr
