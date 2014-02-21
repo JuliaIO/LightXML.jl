@@ -260,7 +260,7 @@ e = create_root(xdoc, name)  # create a root element and set it as root
 e = new_child(parent, name)  # create a new element and add it as a child
                              # equiv. to new_element + add_child
 
-add_text(e, text)    # add text content to an element
+add_text(e, text)    # add cdata content to an element
                      # equiv. to new_textnode + add_child
 
 add_cdata(xdoc, e, text)    # add text content to an element
