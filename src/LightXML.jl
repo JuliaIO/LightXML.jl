@@ -13,7 +13,7 @@ module LightXML
 	child_nodes, has_children, attributes, has_attributes, attributes_dict,
 	child_elements, find_element, get_elements_by_tagname,
 
-	new_element, add_child, new_child, new_textnode, add_text,
+	new_element, add_child, new_child, new_textnode, add_text, add_cdata,
 	set_attribute, set_attributes,
 
 	# document
@@ -27,4 +27,5 @@ module LightXML
 	include("utils.jl")
 	include("nodes.jl")
 	include("document.jl")
+	include("cdata.jl")
 end

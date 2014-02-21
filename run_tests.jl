@@ -1,4 +1,4 @@
-tests = ["parse", "create"]
+tests = ["parse", "create", "cdata"]
 
 for t in tests
 	fpath = joinpath("test", "$t.jl")
