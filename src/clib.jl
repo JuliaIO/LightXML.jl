@@ -49,6 +49,7 @@ _xcopystr(p::Xstr) = (r = bytestring(p); _xmlfree(p); r)
 @lx2func xmlNewNode
 @lx2func xmlAddChild
 @lx2func xmlNewText
+@lx2func xmlNewCDataBlock
 @lx2func xmlSetProp
 
 # functions for documents
