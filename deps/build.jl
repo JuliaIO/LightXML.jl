@@ -10,7 +10,7 @@ deps = [
         ]
 
 location = "ftp://ftp.zlatkovic.com/libxml/64bit/"
-suffix = WORD_SIZE == 32 ? "-win32-x64.7z" : "-win32-x86_64.7z"
+suffix = WORD_SIZE == 32 ? "-win32-x86.7z" : "-win32-x86_64.7z"
 downloadnames = ["iconv-1.14", "libxml2-2.9.1"]
 
 for i=1:2
