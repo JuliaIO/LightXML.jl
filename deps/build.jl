@@ -2,6 +2,8 @@ using BinDeps
 
 @BinDeps.setup
 
+@windows_only begin
+
 deps = [
         libiconv = library_dependency("libiconv-2", aliases = ["libiconv"])
         libxml2 = library_dependency("libxml2", aliases = ["libxml2-2"], depends = [libiconv])
@@ -16,8 +18,7 @@ for i=1:2
     downloadname = "$(downloadnames[i])$suffix"
     srcdir = joinpath(BinDeps.depsdir(deps[i]), downloadnames[i])
     libdir = BinDeps.libdir(deps[i])
-    @windows_only provides(BuildProcess,
-        (@build_steps begin
+    provides(BuildProcess, (@build_steps begin
         FileDownloader("$location$downloadname", joinpath(downloadsdir, downloadname))
         CreateDirectory(srcdir, true)
         FileUnpacker(joinpath(downloadsdir, downloadname), srcdir, "bin")
@@ -28,8 +29,10 @@ for i=1:2
                 `cp $(deps[i].name)*.dll $(libdir)/$(deps[i].name).dll`
             end)
         end
-        end), deps[i], os = :Windows)
+    end), deps[i], os = :Windows)
 end
+
+end # @windows_only
 
 @windows_only push!(BinDeps.defaults, BuildProcess)
 
