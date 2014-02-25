@@ -7,7 +7,7 @@ libxml = library_dependency("libxml2", aliases=["libxml2-2"])
 # Windows
 downloadsdir = BinDeps.downloadsdir(libxml)
 libdir = BinDeps.libdir(libxml)
-downloadname = WORD_SIZE == 32 ? "libxml2-2.9.1-win32-x86.7z : "libxml2-2.9.1-win32-x86_64.7z"
+downloadname = WORD_SIZE == 32 ? "libxml2-2.9.1-win32-x86.7z" : "libxml2-2.9.1-win32-x86_64.7z"
 
 # BinDeps complains about the .7z file on other platforms...
 @windows_only provides(BuildProcess,
