@@ -1,6 +1,7 @@
 # C functions in the library
 
-const libxml2 = dlopen("libxml2", RTLD_GLOBAL)
+@unix_only libxml2 = dlopen("libxml2", RTLD_GLOBAL)
+@windows_only libxml2 = dlopen(joinpath(Pkg.dir("LightXML"),"deps","usr","lib","libxml2"))
 
 macro lx2func(fname)  # the macro to get functions from libxml2
 	quote
