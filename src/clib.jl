@@ -1,6 +1,7 @@
 # C functions in the library
 
-const libxml2 = dlopen("libxml2", RTLD_GLOBAL)
+@unix_only const libxml2 = dlopen("libxml2", RTLD_GLOBAL)
+@windows_only const libxml2 = dlopen(Pkg.dir("WinRPM","deps","usr","$(Sys.ARCH)-w64-mingw32","sys-root","mingw","bin","libxml2-2"))
 
 macro lx2func(fname)  # the macro to get functions from libxml2
 	quote
