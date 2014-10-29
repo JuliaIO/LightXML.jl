@@ -100,7 +100,7 @@ xb2 = XMLElement(rcs[4])
 
 @test !has_attribute(xb2, "wrongattr")
 @test is(attribute(xb2, "wrongattr"), nothing)
-@test_throws attribute(xb2, "wrongattr"; required=true)
+@test_throws LightXML.XMLAttributeNotFound attribute(xb2, "wrongattr"; required=true)
 
 rces = get_elements_by_tagname(xroot, "book")
 @test length(rces) == 2
