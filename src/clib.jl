@@ -4,9 +4,9 @@
 @windows_only const libxml2 = dlopen(Pkg.dir("WinRPM","deps","usr","$(Sys.ARCH)-w64-mingw32","sys-root","mingw","bin","libxml2-2"))
 
 macro lx2func(fname)  # the macro to get functions from libxml2
-	quote
-		$(esc(fname)) = dlsym( libxml2, ($(string(fname))) )
-	end
+    quote
+        $(esc(fname)) = dlsym( libxml2, ($(string(fname))) )
+    end
 end
 
 const nullptr = convert(Ptr{Void}, 0)
@@ -21,11 +21,11 @@ typealias Xptr Ptr{Void}
 # supporting functions
 
 #
-# After tests, it seems that free in libc instead of xmlFree 
+# After tests, it seems that free in libc instead of xmlFree
 # should be used here
 #
 @lx2func xmlFree
-_xmlfree{T}(p::Ptr{T}) = ccall(:free, Void, (Ptr{T},), p)  
+_xmlfree{T}(p::Ptr{T}) = ccall(:free, Void, (Ptr{T},), p)
 
 # pre-condition: p is not null
 _xcopystr(p::Xstr) = (r = bytestring(p); _xmlfree(p); r)
@@ -65,4 +65,3 @@ _xcopystr(p::Xstr) = (r = bytestring(p); _xmlfree(p); r)
 @lx2func xmlDocDumpFormatMemoryEnc
 @lx2func xmlSaveFileEnc
 @lx2func xmlSaveFormatFileEnc
-
