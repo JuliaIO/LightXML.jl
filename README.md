@@ -1,6 +1,6 @@
 ## LightXML.jl
 
-This package is a light-weight Julia wrapper of [Libxml2](http://www.xmlsoft.org), which provides a minimal interface that covers functionalities that are commonly needed:
+This package is a light-weight Julia wrapper of [libxml2](http://www.xmlsoft.org), which provides a minimal interface that covers functionalities that are commonly needed:
 
 * Parse a XML file or string into a tree
 * Access XML tree structure
@@ -54,7 +54,7 @@ using LightXML
 xdoc = parse_file("ex1.xml")
 
 # get the root element
-xroot = root(xdoc)   # an instance of XMLElement
+xroot = root(xdoc)  # an instance of XMLElement
 # print its name
 println(name(xroot))  # this should print: bookstore
 
@@ -90,16 +90,16 @@ println(attribute(e1, "category"))
 t = find_element(e1, "title")
 
 # retrieve the value of lang attribute of t
-a = attribute(t, "lang")   # a <- "en"
+a = attribute(t, "lang")  # a <- "en"
 
 # retrieve the text content of t
 r = content(t)  # r <- "Everyday Italian"
 ```
 
-One can also traverse all attributes of an element ``e`` as
+One can also traverse all attributes of an element (``e1``) as
 
 ```julia
-for a in attributes(e)  # a is an instance of XMLAttr
+for a in attributes(e1)  # a is an instance of XMLAttr
     n = name(a)
     v = value(a)
     println("$n = $v")
@@ -110,7 +110,7 @@ Another way to access attributes is to turn them into a dictionary using ``attri
 
 ```julia
 ad = attributes_dict(e1)
-v = ad["lang"]  # v <-- "en"
+v = ad["category"]  # v <-- "COOKING"
 ```
 
 **Note:** The functions ``child_nodes``, ``child_elements``, and ``attributes`` return light weight iterators -- so that one can use them with for-loop. To get an array of all items, one may use the ``collect`` function provided by Julia.
@@ -187,7 +187,7 @@ Main types of this package
 * ``XMLNode``: represent a generic XML node (``child_nodes`` give you this)
 * ``XMLAttr``: represent an XML attribute
 
-Note that one if an ``XMLNode`` instance ``x`` is actually an element node, one may construct an ``XMLElement`` instance by ``XMLElement(x)``.
+**Note:** If an ``XMLNode`` instance ``x`` is actually an element node, one may construct an ``XMLElement`` instance by ``XMLElement(x)``.
 
 
 ### API Functions
@@ -200,27 +200,27 @@ A list of API functions:
 ```julia
 # Let xdoc be a document, x be a node/element, e be an element
 
-root(xdoc)    # get the root element of a document
+root(xdoc)   # get the root element of a document
 
-nodetype(x)   # get an integer indicating the node type
-name(x)       # get the name of a node/element
-content(x)    # get text content of a node/element
-              # if x is an element, this returns all text (concatenated) within x
+nodetype(x)  # get an integer indicating the node type
+name(x)      # get the name of a node/element
+content(x)   # get text content of a node/element
+             # if x is an element, this returns all text (concatenated) within x
 
-is_elementnode(x)   # whether x is an element node
-is_textnode(x)      # whether x is a text node
-is_cdatanode(x)     # whether x is a CDATA node
-is_commentnode(x)   # whether x is a comment node
+is_elementnode(x)       # whether x is an element node
+is_textnode(x)          # whether x is a text node
+is_cdatanode(x)         # whether x is a CDATA node
+is_commentnode(x)       # whether x is a comment node
 
-has_children(e)      # whether e has child nodes
-has_attributes(e)    # whether e has attributes
+has_children(e)         # whether e has child nodes
+has_attributes(e)       # whether e has attributes
 
-child_nodes(x)       # iterator of all child nodes of a node/element x
-child_elements(e)    # iterator of all child elements of e
-attributes(e)        # iterator of all attributes of e
+child_nodes(x)          # iterator of all child nodes of a node/element x
+child_elements(e)       # iterator of all child elements of e
+attributes(e)           # iterator of all attributes of e
 
-attributes_dict(e)   # a dictionary of all attributes of e,
-                     # which maps names to corresponding values
+attributes_dict(e)      # a dictionary of all attributes of e,
+                        # which maps names to corresponding values
 
 has_attribute(e, name)  # whether a named attribute exists for e
 
@@ -236,43 +236,43 @@ find_element(e, name)   # the first element of specified name under e
 get_elements_by_tagname(e, name)  # a list of all child elements of e with
                                   # the specified name
 
-string(e)      # Format an XML element into a string
-show(io, e)    # output formatted XML element
+string(e)               # format an XML element into a string
+show(io, e)             # output formatted XML element
 ```
 
 ##### Functions to create an XML document
 
 ```julia
-xdoc = XMLDocument()     # create an empty XML document
+xdoc = XMLDocument()           # create an empty XML document
 
-e = new_element(name)    # create a new XML element
-                         # this does not attach e to a tree
+e = new_element(name)          # create a new XML element
+                               # this does not attach e to a tree
 
-t = new_textnode(content)   # create a new text node
-                            # this does not attach t to a tree
+t = new_textnode(content)      # create a new text node
+                               # this does not attach t to a tree
 
-set_root(xdoc, e)        # set element e as the root of xdoc
-add_child(parent, x)     # add x as a child of a parent element
+set_root(xdoc, e)              # set element e as the root of xdoc
+add_child(parent, x)           # add x as a child of a parent element
 
-e = create_root(xdoc, name)  # create a root element and set it as root
-                             # equiv. to new_element + set_root
+e = create_root(xdoc, name)    # create a root element and set it as root
+                               # equiv. to new_element + set_root
 
-e = new_child(parent, name)  # create a new element and add it as a child
-                             # equiv. to new_element + add_child
+e = new_child(parent, name)    # create a new element and add it as a child
+                               # equiv. to new_element + add_child
 
-add_text(e, text)    # add text content to an element
-                     # equiv. to new_textnode + add_child
+add_text(e, text)              # add text content to an element
+                               # equiv. to new_textnode + add_child
 
-add_cdata(xdoc, e, text)    # add cdata content to an element
-                            # equiv. to new_cdatanode + add_child
+add_cdata(xdoc, e, text)       # add cdata content to an element
+                               # equiv. to new_cdatanode + add_child
 
 set_attribute(e, name, value)  # set an attribute of an element
                                # this returns the added attribute
                                # as an instance of XMLAttr
 
-set_attributes(e, attrs)   # set multiple attributes in one call
-                           # attrs can be a dictionary or
-                           # a list of pairs as (name, value)
+set_attributes(e, attrs)       # set multiple attributes in one call
+                               # attrs can be a dictionary or
+                               # a list of pairs as (name, value)
 
 # one can also use keyword arguments to set attributes to an element
 set_attributes(e, key1="val1", key2="val2", ...)
@@ -281,10 +281,10 @@ set_attributes(e, key1="val1", key2="val2", ...)
 ##### Functions to work with a document
 
 ```julia
-xdoc = parse_file(filename)    # parse an XML file
-xdoc = parse_string(str)       # parse an XML doc from a string
-save_file(xdoc, filename)      # save xdoc to an XML file
+xdoc = parse_file(filename)  # parse an XML file
+xdoc = parse_string(str)     # parse an XML doc from a string
+save_file(xdoc, filename)    # save xdoc to an XML file
 
-string(xdoc)     # Formatted XML doc to a string
-show(io, xdoc)   # output formatted XML document
+string(xdoc)                 # formatted XML doc to a string
+show(io, xdoc)               # output formatted XML document
 ```
