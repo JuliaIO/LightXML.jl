@@ -235,7 +235,7 @@ attributes(x::XMLElement) = XMLAttrIter(x.node._struct.attrs)
 function attributes_dict(x::XMLElement)
     # make an dictionary based on attributes
 
-    dct = (String=>String)[]
+    dct = Dict{String,String}()
     if has_attributes(x)
         for a in attributes(x)
             dct[name(a)] = value(a)

@@ -1,4 +1,4 @@
-using LightXML
+using LightXML, Compat
 
 xdoc = XMLDocument()
 
@@ -10,7 +10,7 @@ set_attribute(xs1, "tag", "MA")
 
 xs2 = new_child(xroot, "State")
 add_text(xs2, "Illinois")
-set_attributes(xs2, {"tag"=>"IL", "cap"=>"Springfield"})
+set_attributes(xs2, @compat Dict{Any,Any}("tag"=>"IL", "cap"=>"Springfield"))
 
 xs3 = new_child(xroot, "State")
 add_text(xs3, "California")
