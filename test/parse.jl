@@ -152,4 +152,3 @@ cz = find_element(xb1, "abc")
 @test is(cz, nothing)
 
 free(xdoc)
-

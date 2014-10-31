@@ -1,1 +1,3 @@
+*.jl.cov
+*.jl.mem
 ex1
