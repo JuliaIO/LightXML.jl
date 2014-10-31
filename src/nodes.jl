@@ -176,9 +176,7 @@ function Base.string(nd::XMLNode)
     return r
 end
 
-function Base.show(io::IO, nd::XMLNode)
-    println(io, Base.string(nd))
-end
+Base.show(io::IO, nd::XMLNode) = println(io, string(nd))
 
 
 #######################################
@@ -206,8 +204,8 @@ has_children(x::XMLElement) = has_children(x.node)
 child_nodes(x::XMLElement) = child_nodes(x.node)
 content(x::XMLElement) = content(x.node)
 
-Base.string(x::XMLElement) = Base.string(x.node)
-Base.show(io::IO, x::XMLElement) = Base.show(x.node)
+Base.string(x::XMLElement) = string(x.node)
+Base.show(io::IO, x::XMLElement) = show(io, x.node)
 
 # attribute access
 

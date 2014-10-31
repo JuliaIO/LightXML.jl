@@ -116,4 +116,4 @@ function Base.string(xdoc::XMLDocument; encoding::String="utf-8")
     _xcopystr(buf_out[1])
 end
 
-Base.show(io::IO, xdoc::XMLDocument) = println(io, Base.string(xdoc))
+Base.show(io::IO, xdoc::XMLDocument) = println(io, string(xdoc))
