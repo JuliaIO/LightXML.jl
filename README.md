@@ -1,5 +1,7 @@
 ## LightXML.jl
 
+[![Build Status](https://travis-ci.org/JuliaLang/LightXML.jl.svg?branch=master)](https://travis-ci.org/JuliaLang/LightXML.jl)
+
 This package is a light-weight Julia wrapper of [libxml2](http://www.xmlsoft.org), which provides a minimal interface that covers functionalities that are commonly needed:
 
 * Parse a XML file or string into a tree
