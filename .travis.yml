@@ -1,15 +1,12 @@
-language: cpp
+language: julia
 os:
   - linux
   - osx
-compiler:
-  - clang
+julia:
+    - release
+    - nightly
 notifications:
-  email: false
-env:
-  matrix:
-    - JULIAVERSION="juliareleases"
-    - JULIAVERSION="julianightlies"
+    email: false
 before_install:
   - curl http://julialang.org/install-julia.sh | sh -s $JULIAVERSION
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
