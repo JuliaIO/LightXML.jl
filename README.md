@@ -162,6 +162,8 @@ add_text(xs3, "California")
 set_attributes(xs3; tag="CA", cap="Sacramento")
 ```
 
+**Note:** When you create XML documents and elements directly you need to take care not to leak memory; memory management in the underlying libxml2 library is complex and LightXML currently does not integrate well with Julia's garbage collection system. You can call ``free`` on an XMLDocument but if you are directly creating XMLElement's there is not yet a corresponding ``free`` function to call.
+
 #### Export an XML file
 
 With this package, you can easily export an XML file to a string or a file, or show it on the console, as
