@@ -162,7 +162,7 @@ add_text(xs3, "California")
 set_attributes(xs3; tag="CA", cap="Sacramento")
 ```
 
-**Note:** When you create XML documents and elements directly you need to take care not to leak memory; memory management in the underlying libxml2 library is complex and LightXML currently does not integrate well with Julia's garbage collection system. You can call ``free`` on an XMLDocument but if you are directly creating XMLElement's there is not yet a corresponding ``free`` function to call.
+**Note:** When you create XML documents and elements directly you need to take care not to leak memory; memory management in the underlying libxml2 library is complex and LightXML currently does not integrate well with Julia's garbage collection system. You can call ``free`` on an XMLDocument, XMLNode or XMLElement but you must take care not to reference any child elements after they have been manually freed.
 
 #### Export an XML file
 
@@ -242,6 +242,11 @@ get_elements_by_tagname(e, name)  # a list of all child elements of e with
 
 string(e)               # format an XML element into a string
 show(io, e)             # output formatted XML element
+
+unlink(x)               # remove a node or element from its current context
+                        # (unlink does not free the memory for the node/element)
+free(xdoc)              # release memory for a document and all its children
+free(x)                 # release memory for a node/element and all its children
 ```
 
 ##### Functions to create an XML document
