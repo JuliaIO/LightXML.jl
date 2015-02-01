@@ -145,6 +145,14 @@ has_children(nd::XMLNode) = (nd._struct.children != nullptr)
 # whether it is a white-space only text node
 is_blanknode(nd::XMLNode) = bool(ccall(xmlIsBlankNode, Cint, (Xptr,), nd.ptr))
 
+function free(nd::XMLNode)
+    ccall(xmlFreeNode, Void, (Xptr,), nd.ptr)
+    nd.ptr = nullptr
+end
+
+function unlink(nd::XMLNode)
+    ccall(xmlUnlinkNode, Void, (Xptr,), nd.ptr)
+end
 
 # iteration over children
 
@@ -206,6 +214,9 @@ content(x::XMLElement) = content(x.node)
 
 Base.string(x::XMLElement) = string(x.node)
 Base.show(io::IO, x::XMLElement) = show(io, x.node)
+
+free(x::XMLElement) = free(x.node)
+unlink(x::XMLElement) = unlink(x.node)
 
 # attribute access
 
