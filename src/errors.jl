@@ -1,5 +1,5 @@
 
-abstract XMLError
+abstract XMLError <: Exception
 
 immutable XMLParseError <: XMLError
     msg::String
