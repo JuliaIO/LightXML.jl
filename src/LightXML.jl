@@ -20,7 +20,7 @@ module LightXML
     XMLDocument, version, encoding, compression, standalone, root,
     parse_file, parse_string, save_file, set_root, create_root
 
-
+    using Compat
     include("clib.jl")
     include("errors.jl")
 
