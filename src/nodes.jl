@@ -143,7 +143,7 @@ nodetype(nd::XMLNode) = nd._struct.nodetype
 has_children(nd::XMLNode) = (nd._struct.children != nullptr)
 
 # whether it is a white-space only text node
-is_blanknode(nd::XMLNode) = bool(ccall(xmlIsBlankNode, Cint, (Xptr,), nd.ptr))
+is_blanknode(nd::XMLNode) = @compat Bool(ccall(xmlIsBlankNode, Cint, (Xptr,), nd.ptr))
 
 function free(nd::XMLNode)
     ccall(xmlFreeNode, Void, (Xptr,), nd.ptr)

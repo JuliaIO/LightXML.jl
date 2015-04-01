@@ -55,8 +55,8 @@ end
 
 version(xdoc::XMLDocument) = bytestring(xdoc._struct.version)
 encoding(xdoc::XMLDocument) = bytestring(xdoc._struct.encoding)
-compression(xdoc::XMLDocument) = int(xdoc._struct.compression)
-standalone(xdoc::XMLDocument) = int(xdoc._struct.standalone)
+compression(xdoc::XMLDocument) = @compat Int(xdoc._struct.compression)
+standalone(xdoc::XMLDocument) = @compat Int(xdoc._struct.standalone)
 
 function root(xdoc::XMLDocument)
     pr = ccall(xmlDocGetRootElement, Ptr{Void}, (Ptr{Void},), xdoc.ptr)
