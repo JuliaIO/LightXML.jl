@@ -105,7 +105,7 @@ function save_file(xdoc::XMLDocument, filename::String; encoding::String="utf-8"
     if ret < 0
         throw(XMLWriteError("Failed to save XML to file $filename"))
     end
-    return int(ret)  # number of bytes written
+    return @compat Int(ret)  # number of bytes written
 end
 
 function Base.string(xdoc::XMLDocument; encoding::String="utf-8")
