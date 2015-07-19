@@ -16,7 +16,7 @@ xs3 = new_child(xroot, "State")
 add_text(xs3, "California")
 set_attributes(xs3; tag="CA", cap="Sacramento")
 
-rtxt = """
+rtxt1 = """
 <?xml version="1.0" encoding="utf-8"?>
 <States>
   <State tag="MA">Massachusetts</State>
@@ -25,6 +25,15 @@ rtxt = """
 </States>
 """
 
-@assert strip(string(xdoc)) == strip(rtxt)
+rtxt2 = """
+<?xml version="1.0" encoding="utf-8"?>
+<States>
+  <State tag="MA">Massachusetts</State>
+  <State cap="Springfield" tag="IL">Illinois</State>
+  <State tag="CA" cap="Sacramento">California</State>
+</States>
+"""
+
+@assert (strip(string(xdoc)) == strip(rtxt1)) || (strip(string(xdoc)) == strip(rtxt2))
 
 free(xdoc)
