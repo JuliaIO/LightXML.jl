@@ -326,7 +326,13 @@ end
 
 set_attribute(x::XMLElement, name::String, val) = set_attribute(x, name, string(val))
 
-function set_attributes{P<:NTuple{2}}(x::XMLElement, attrs::AbstractArray{P})
+if VERSION < v"0.4.0-dev+980"
+    PairTypes = NTuple{2}
+else
+    PairTypes = Union(NTuple{2}, Pair)
+end
+
+function set_attributes{P<:PairTypes}(x::XMLElement, attrs::AbstractArray{P})
     for (nam, val) in attrs
         set_attribute(x, string(nam), string(val))
     end
