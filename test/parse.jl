@@ -23,7 +23,8 @@ docstr = """
 
 for xdoc = (parse_string(docstr),
             parse_file(joinpath(dirname(@__FILE__), "ex1.xml")),
-            parse_file(joinpath(dirname(@__FILE__), "ex1.xml"), C_NULL, 64)) # 64 == XML_PARSE_NOWARNING
+            parse_file(joinpath(dirname(@__FILE__), "ex1.xml"), C_NULL, 64), # 64 == XML_PARSE_NOWARNING
+            parse_file(joinpath(dirname(@__FILE__), "ex1.xml"), "UTF-8", 64))
 
 @test version(xdoc) == "1.0"
 @test encoding(xdoc) == "UTF-8"
