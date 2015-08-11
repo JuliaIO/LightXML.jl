@@ -292,6 +292,9 @@ set_attributes(e, key1="val1", key2="val2", ...)
 
 ```julia
 xdoc = parse_file(filename)  # parse an XML file
+xdoc = parse_file(filename,  # parse an XML file with a specified encoding and parser options,
+         encoding, options)  # see http://xmlsoft.org/html/libxml-parser.html#xmlReadFile
+                             # and http://xmlsoft.org/html/libxml-parser.html#xmlParserOption
 xdoc = parse_string(str)     # parse an XML doc from a string
 save_file(xdoc, filename)    # save xdoc to an XML file
 

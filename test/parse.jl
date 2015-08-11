@@ -21,7 +21,9 @@ docstr = """
 </bookstore>
 """
 
-xdoc = parse_string(docstr)
+for xdoc = (parse_string(docstr),
+            parse_file(joinpath(dirname(@__FILE__), "ex1.xml")),
+            parse_file(joinpath(dirname(@__FILE__), "ex1.xml"), C_NULL, 64)) # 64 == XML_PARSE_NOWARNING
 
 @test version(xdoc) == "1.0"
 @test encoding(xdoc) == "UTF-8"
@@ -152,3 +154,4 @@ cz = find_element(xb1, "abc")
 @test is(cz, nothing)
 
 free(xdoc)
+end

@@ -90,6 +90,13 @@ function parse_file(filename::AbstractString)
     XMLDocument(p)
 end
 
+function parse_file(filename::AbstractString, encoding, options::Integer)
+    p = ccall((:xmlReadFile,libxml2), Xptr, (Cstring, Ptr{Cchar}, Cint),
+        filename, encoding, options)
+    p != C_NULL || throw(XMLParseError("Failure in parsing an XML file."))
+    XMLDocument(p)
+end
+
 function parse_string(s::AbstractString)
     p = ccall((:xmlParseMemory,libxml2), Xptr, (Xstr, Cint), s, sizeof(s) + 1)
     p != C_NULL || throw(XMLParseError("Failure in parsing an XML string."))
