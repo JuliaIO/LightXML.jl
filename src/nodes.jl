@@ -85,8 +85,8 @@ end
 name(a::XMLAttr) = bytestring(a._struct.name)
 
 function value(a::XMLAttr)
-    pct = ccall(xmlNodeGetContent, Xstr, (Xptr,), a._struct.children)
-    (pct != nullptr ? _xcopystr(pct) : "")::String
+    pct = ccall((:xmlNodeGetContent,libxml2), Xstr, (Xptr,), a._struct.children)
+    (pct != C_NULL ? _xcopystr(pct) : "")::AbstractString
 end
 
 # iterations
@@ -96,7 +96,7 @@ immutable XMLAttrIter
 end
 
 Base.start(it::XMLAttrIter) = it.p
-Base.done(it::XMLAttrIter, p::Xptr) = (p == nullptr)
+Base.done(it::XMLAttrIter, p::Xptr) = (p == C_NULL)
 Base.next(it::XMLAttrIter, p::Xptr) = (a = XMLAttr(p); (a, a._struct.next))
 
 
@@ -140,18 +140,18 @@ end
 
 name(nd::XMLNode) = bytestring(nd._struct.name)
 nodetype(nd::XMLNode) = nd._struct.nodetype
-has_children(nd::XMLNode) = (nd._struct.children != nullptr)
+has_children(nd::XMLNode) = (nd._struct.children != C_NULL)
 
 # whether it is a white-space only text node
-is_blanknode(nd::XMLNode) = @compat Bool(ccall(xmlIsBlankNode, Cint, (Xptr,), nd.ptr))
+is_blanknode(nd::XMLNode) = @compat Bool(ccall((:xmlIsBlankNode,libxml2), Cint, (Xptr,), nd.ptr))
 
 function free(nd::XMLNode)
-    ccall(xmlFreeNode, Void, (Xptr,), nd.ptr)
-    nd.ptr = nullptr
+    ccall((:xmlFreeNode,libxml2), Void, (Xptr,), nd.ptr)
+    nd.ptr = C_NULL
 end
 
 function unlink(nd::XMLNode)
-    ccall(xmlUnlinkNode, Void, (Xptr,), nd.ptr)
+    ccall((:xmlUnlinkNode,libxml2), Void, (Xptr,), nd.ptr)
 end
 
 # iteration over children
@@ -161,14 +161,14 @@ immutable XMLNodeIter
 end
 
 Base.start(it::XMLNodeIter) = it.p
-Base.done(it::XMLNodeIter, p::Xptr) = (p == nullptr)
+Base.done(it::XMLNodeIter, p::Xptr) = (p == C_NULL)
 Base.next(it::XMLNodeIter, p::Xptr) = (nd = XMLNode(p); (nd, nd._struct.next))
 
 child_nodes(nd::XMLNode) = XMLNodeIter(nd._struct.children)
 
 function content(nd::XMLNode)
-    pct = ccall(xmlNodeGetContent, Xstr, (Xptr,), nd.ptr)
-    (pct != nullptr ? _xcopystr(pct) : "")::String
+    pct = ccall((:xmlNodeGetContent,libxml2), Xstr, (Xptr,), nd.ptr)
+    (pct != C_NULL ? _xcopystr(pct) : "")::AbstractString
 end
 
 # dumping
@@ -177,7 +177,7 @@ const DEFAULT_DUMPBUFFER_SIZE = 4096
 
 function Base.string(nd::XMLNode)
     buf = XBuffer(DEFAULT_DUMPBUFFER_SIZE)
-    ccall(xmlNodeDump, Cint, (Xptr, Xptr, Xptr, Cint, Cint),
+    ccall((:xmlNodeDump,libxml2), Cint, (Xptr, Xptr, Xptr, Cint, Cint),
         buf.ptr, nd._struct.doc, nd.ptr, 0, 1)
     r = content(buf)
     free(buf)
@@ -220,9 +220,9 @@ unlink(x::XMLElement) = unlink(x.node)
 
 # attribute access
 
-function attribute(x::XMLElement, name::String; required::Bool=false)
-    pv = ccall(xmlGetProp, Xstr, (Xptr, Xstr), x.node.ptr, name)
-    if pv != nullptr
+function attribute(x::XMLElement, name::AbstractString; required::Bool=false)
+    pv = ccall((:xmlGetProp,libxml2), Xstr, (Xptr, Cstring), x.node.ptr, name)
+    if pv != C_NULL
         return _xcopystr(pv)
     else
         if required
@@ -233,12 +233,12 @@ function attribute(x::XMLElement, name::String; required::Bool=false)
     end
 end
 
-function has_attribute(x::XMLElement, name::String)
-    p = ccall(xmlHasProp, Xptr, (Xptr, Xstr), x.node.ptr, name)
-    return p != nullptr
+function has_attribute(x::XMLElement, name::AbstractString)
+    p = ccall((:xmlHasProp,libxml2), Xptr, (Xptr, Cstring), x.node.ptr, name)
+    return p != C_NULL
 end
 
-has_attributes(x::XMLElement) = (x.node._struct.attrs != nullptr)
+has_attributes(x::XMLElement) = (x.node._struct.attrs != C_NULL)
 attributes(x::XMLElement) = XMLAttrIter(x.node._struct.attrs)
 
 function attributes_dict(x::XMLElement)
@@ -260,15 +260,15 @@ immutable XMLElementIter
     parent_ptr::Xptr
 end
 
-Base.start(it::XMLElementIter) = ccall(xmlFirstElementChild, Xptr, (Xptr,), it.parent_ptr)
-Base.done(it::XMLElementIter, p::Xptr) = (p == nullptr)
-Base.next(it::XMLElementIter, p::Xptr) = (XMLElement(p), ccall(xmlNextElementSibling, Xptr, (Xptr,), p))
+Base.start(it::XMLElementIter) = ccall((:xmlFirstElementChild,libxml2), Xptr, (Xptr,), it.parent_ptr)
+Base.done(it::XMLElementIter, p::Xptr) = (p == C_NULL)
+Base.next(it::XMLElementIter, p::Xptr) = (XMLElement(p), ccall((:xmlNextElementSibling,libxml2), Xptr, (Xptr,), p))
 
 child_elements(x::XMLElement) = XMLElementIter(x.node.ptr)
 
 # elements by tag name
 
-function find_element(x::XMLElement, n::String)
+function find_element(x::XMLElement, n::AbstractString)
     for c in child_elements(x)
         if name(c) == n
             return c
@@ -277,7 +277,7 @@ function find_element(x::XMLElement, n::String)
     return nothing
 end
 
-function get_elements_by_tagname(x::XMLElement, n::String)
+function get_elements_by_tagname(x::XMLElement, n::AbstractString)
     lst = Array(XMLElement, 0)
     for c in child_elements(x)
         if name(c) == n
@@ -294,42 +294,42 @@ end
 #
 #######################################
 
-function new_element(name::String)
-    p = ccall(xmlNewNode, Xptr, (Xptr, Xstr), nullptr, name)
+function new_element(name::AbstractString)
+    p = ccall((:xmlNewNode,libxml2), Xptr, (Xptr, Cstring), C_NULL, name)
     XMLElement(p)
 end
 
 function add_child(xparent::XMLElement, xchild::XMLNode)
-    p = ccall(xmlAddChild, Xptr, (Xptr, Xptr), xparent.node.ptr, xchild.ptr)
-    p != nullptr || throw(XMLTreeError("Failed to add a child node."))
+    p = ccall((:xmlAddChild,libxml2), Xptr, (Xptr, Xptr), xparent.node.ptr, xchild.ptr)
+    p != C_NULL || throw(XMLTreeError("Failed to add a child node."))
 end
 
 add_child(xparent::XMLElement, xchild::XMLElement) = add_child(xparent, xchild.node)
 
-function new_child(xparent::XMLElement, name::String)
+function new_child(xparent::XMLElement, name::AbstractString)
     xc = new_element(name)
     add_child(xparent, xc)
     return xc
 end
 
-function new_textnode(txt::String)
-    p = ccall(xmlNewText, Xptr, (Xstr,), txt)
+function new_textnode(txt::AbstractString)
+    p = ccall((:xmlNewText,libxml2), Xptr, (Cstring,), txt)
     XMLNode(p)
 end
 
-add_text(x::XMLElement, txt::String) = add_child(x, new_textnode(txt))
+add_text(x::XMLElement, txt::AbstractString) = add_child(x, new_textnode(txt))
 
-function set_attribute(x::XMLElement, name::String, val::String)
-    a = ccall(xmlSetProp, Xptr, (Xptr, Xstr, Xstr), x.node.ptr, name, val)
+function set_attribute(x::XMLElement, name::AbstractString, val::AbstractString)
+    a = ccall((:xmlSetProp,libxml2), Xptr, (Xptr, Cstring, Cstring), x.node.ptr, name, val)
     return XMLAttr(a)
 end
 
-set_attribute(x::XMLElement, name::String, val) = set_attribute(x, name, string(val))
+set_attribute(x::XMLElement, name::AbstractString, val) = set_attribute(x, name, string(val))
 
 if VERSION < v"0.4.0-dev+980"
-    PairTypes = NTuple{2}
+    const PairTypes = NTuple{2}
 else
-    PairTypes = Union(NTuple{2}, Pair)
+    const PairTypes = Union(NTuple{2}, Pair)
 end
 
 function set_attributes{P<:PairTypes}(x::XMLElement, attrs::AbstractArray{P})
