@@ -5,7 +5,7 @@ immutable _XMLDocStruct  # use the same layout as C
     # common part
     _private::Ptr{Void}
     nodetype::Cint
-    name::Ptr{Cchar}
+    name::Xstr
     children::Xptr
     last::Xptr
     parent::Xptr
@@ -48,7 +48,7 @@ type XMLDocument
 
     function XMLDocument()
         # create an empty document
-        ptr = ccall(xmlNewDoc, Xptr, (Ptr{Cchar},), "1.0")
+        ptr = ccall((:xmlNewDoc,libxml2), Xptr, (Cstring,), "1.0")
         XMLDocument(ptr)
     end
 end
@@ -59,8 +59,8 @@ compression(xdoc::XMLDocument) = @compat Int(xdoc._struct.compression)
 standalone(xdoc::XMLDocument) = @compat Int(xdoc._struct.standalone)
 
 function root(xdoc::XMLDocument)
-    pr = ccall(xmlDocGetRootElement, Ptr{Void}, (Ptr{Void},), xdoc.ptr)
-    pr != nullptr || throw(XMLNoRootError())
+    pr = ccall((:xmlDocGetRootElement,libxml2), Xptr, (Xptr,), xdoc.ptr)
+    pr != C_NULL || throw(XMLNoRootError())
     XMLElement(pr)
 end
 
@@ -68,15 +68,15 @@ end
 #### construction & free
 
 function free(xdoc::XMLDocument)
-    ccall(xmlFreeDoc, Void, (Ptr{Void},), xdoc.ptr)
-    xdoc.ptr = nullptr
+    ccall((:xmlFreeDoc,libxml2), Void, (Xptr,), xdoc.ptr)
+    xdoc.ptr = C_NULL
 end
 
 function set_root(xdoc::XMLDocument, xroot::XMLElement)
-    ccall(xmlDocSetRootElement, Xptr, (Xptr, Xptr), xdoc.ptr, xroot.node.ptr)
+    ccall((:xmlDocSetRootElement,libxml2), Xptr, (Xptr, Xptr), xdoc.ptr, xroot.node.ptr)
 end
 
-function create_root(xdoc::XMLDocument, name::String)
+function create_root(xdoc::XMLDocument, name::AbstractString)
     xroot = new_element(name)
     set_root(xdoc, xroot)
     return xroot
@@ -84,23 +84,23 @@ end
 
 #### parse and free
 
-function parse_file(filename::String)
-    p = ccall(xmlParseFile, Xptr, (Ptr{Cchar},), filename)
-    p != nullptr || throw(XMLParseError("Failure in parsing an XML file."))
+function parse_file(filename::AbstractString)
+    p = ccall((:xmlParseFile,libxml2), Xptr, (Cstring,), filename)
+    p != C_NULL || throw(XMLParseError("Failure in parsing an XML file."))
     XMLDocument(p)
 end
 
-function parse_string(s::String)
-    p = ccall(xmlParseMemory, Xptr, (Ptr{Cchar}, Cint), s, sizeof(s) + 1)
-    p != nullptr || throw(XMLParseError("Failure in parsing an XML string."))
+function parse_string(s::AbstractString)
+    p = ccall((:xmlParseMemory,libxml2), Xptr, (Xstr, Cint), s, sizeof(s) + 1)
+    p != C_NULL || throw(XMLParseError("Failure in parsing an XML string."))
     XMLDocument(p)
 end
 
 
 #### output
 
-function save_file(xdoc::XMLDocument, filename::String; encoding::String="utf-8")
-    ret = ccall(xmlSaveFormatFileEnc, Cint, (Ptr{Cchar}, Xptr, Ptr{Cchar}, Cint),
+function save_file(xdoc::XMLDocument, filename::AbstractString; encoding::AbstractString="utf-8")
+    ret = ccall((:xmlSaveFormatFileEnc,libxml2), Cint, (Cstring, Xptr, Cstring, Cint),
         filename, xdoc.ptr, encoding, 1)
     if ret < 0
         throw(XMLWriteError("Failed to save XML to file $filename"))
@@ -108,10 +108,10 @@ function save_file(xdoc::XMLDocument, filename::String; encoding::String="utf-8"
     return @compat Int(ret)  # number of bytes written
 end
 
-function Base.string(xdoc::XMLDocument; encoding::String="utf-8")
+function Base.string(xdoc::XMLDocument; encoding::AbstractString="utf-8")
     buf_out = Array(Xstr, 1)
     len_out = Array(Cint, 1)
-    ccall(xmlDocDumpFormatMemoryEnc, Void, (Xptr, Ptr{Xstr}, Ptr{Cint}, Ptr{Cchar}, Cint),
+    ccall((:xmlDocDumpFormatMemoryEnc,libxml2), Void, (Xptr, Ptr{Xstr}, Ptr{Cint}, Cstring, Cint),
         xdoc.ptr, buf_out, len_out, encoding, 1)
     _xcopystr(buf_out[1])
 end

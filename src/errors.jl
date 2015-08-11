@@ -1,8 +1,8 @@
 
 abstract XMLError <: Exception
 
-immutable XMLParseError <: XMLError
-    msg::String
+immutable XMLParseError{T<:AbstractString} <: XMLError
+    msg::T
 end
 
 immutable XMLNoRootError <: XMLError
@@ -11,12 +11,12 @@ end
 immutable XMLAttributeNotFound <: XMLError
 end
 
-immutable XMLWriteError <: XMLError
-    msg::String
+immutable XMLWriteError{T<:AbstractString} <: XMLError
+    msg::T
 end
 
-immutable XMLTreeError <: XMLError
-    msg::String
+immutable XMLTreeError{T<:AbstractString} <: XMLError
+    msg::T
 end
 
 const dom_exception_causes = [
@@ -33,9 +33,9 @@ const dom_exception_causes = [
 ]
 
 
-immutable DOMException <: XMLError
+immutable DOMException{T<:AbstractString} <: XMLError
     code::Int
-    cause::String
+    cause::T
 
     DOMException(code::Int) = new(code, dom_exception_causes[code])
 end

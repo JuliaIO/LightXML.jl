@@ -1,5 +1,5 @@
 function new_cdatanode(xdoc::XMLDocument, txt::ASCIIString)
-        p = ccall(xmlNewCDataBlock, Xptr, (Xptr, Xstr, Cint), xdoc.ptr, txt, length(txt)+1)
+        p = ccall((:xmlNewCDataBlock,libxml2), Xptr, (Xptr, Xstr, Cint), xdoc.ptr, txt, length(txt)+1)
         XMLNode(p)
 end
 
