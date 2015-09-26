@@ -244,7 +244,7 @@ attributes(x::XMLElement) = XMLAttrIter(x.node._struct.attrs)
 function attributes_dict(x::XMLElement)
     # make an dictionary based on attributes
 
-    dct = Dict{String,String}()
+    dct = Dict{AbstractString,AbstractString}()
     if has_attributes(x)
         for a in attributes(x)
             dct[name(a)] = value(a)
@@ -329,7 +329,7 @@ set_attribute(x::XMLElement, name::AbstractString, val) = set_attribute(x, name,
 if VERSION < v"0.4.0-dev+980"
     const PairTypes = NTuple{2}
 else
-    const PairTypes = Union(NTuple{2}, Pair)
+    const PairTypes = Union{NTuple{2}, Pair}
 end
 
 function set_attributes{P<:PairTypes}(x::XMLElement, attrs::AbstractArray{P})
