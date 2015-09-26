@@ -329,7 +329,7 @@ set_attribute(x::XMLElement, name::AbstractString, val) = set_attribute(x, name,
 if VERSION < v"0.4.0-dev+980"
     const PairTypes = NTuple{2}
 else
-    const PairTypes = Union{NTuple{2}, Pair}
+    const PairTypes = @compat Union{NTuple{2}, Pair}
 end
 
 function set_attributes{P<:PairTypes}(x::XMLElement, attrs::AbstractArray{P})
