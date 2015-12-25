@@ -24,7 +24,10 @@ export
 
     # document
     XMLDocument, version, encoding, compression, standalone, root,
-    parse_file, parse_string, save_file, set_root, create_root
+    parse_file, parse_string, save_file, set_root, create_root,
+
+    # xpath
+    evalxpath
 
 typealias Xchar UInt8
 typealias Xstr Ptr{Xchar}
@@ -44,5 +47,6 @@ include("utils.jl")
 include("nodes.jl")
 include("document.jl")
 include("cdata.jl")
+include("xpath.jl")
 
 end
