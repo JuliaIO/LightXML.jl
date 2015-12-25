@@ -1,15 +1,15 @@
 type XPathContext
-    ptr::Ptr{Void}
+    ptr::Xptr
     function XPathContext(doc::XMLDocument)
-        ctx = ccall(
+        ptr = ccall(
             (:xmlXPathNewContext, libxml2),
-            Ptr{Void},
+            Xptr,
             (Ptr{Void},),
             doc.ptr)
-        if ctx == C_NULL
-            error()
+        if ptr == C_NULL
+            error("failed to create an XPathContext")
         end
-        return new(ctx)
+        return new(ptr)
     end
 end
 
@@ -33,7 +33,7 @@ end
 
 type XPathObject
     ptr::Ptr{_XMLXPathObject}
-    function XPathObject(ptr)
+    function XPathObject(ptr::Ptr)
         return new(ptr)
     end
 end
@@ -55,18 +55,18 @@ Base.start(obj::XPathObject)   = 1
 Base.done(obj::XPathObject, i) = i > length(obj)
 Base.next(obj::XPathObject, i) = obj[i], i + 1
 
-function evalxpath(xpath, ctx::XPathContext)
+function evalxpath(xpath::AbstractString, ctx::XPathContext)
     ptr = ccall(
         (:xmlXPathEvalExpression, libxml2),
-        Ptr{Void},
-        (Cstring, Ptr{Void}),
+        Ptr{_XMLXPathObject},
+        (Cstring, Xptr),
         xpath, ctx.ptr)
     if ptr == C_NULL
-        error()
+        error("failed to evaluate the XPath expression")
     end
     return XPathObject(ptr)
 end
 
-function evalxpath(xpath, doc::XMLDocument)
+function evalxpath(xpath::AbstractString, doc::XMLDocument)
     return evalxpath(xpath, XPathContext(doc))
 end
