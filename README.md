@@ -121,6 +121,76 @@ v = ad["category"]  # v <-- "COOKING"
 **Note:** The functions ``child_nodes``, ``child_elements``, and ``attributes`` return light weight iterators -- so that one can use them with for-loop. To get an array of all items, one may use the ``collect`` function provided by Julia.
 
 
+#### XML as an Indexable Collection
+
+Extract the content of a single tag:
+
+```julia
+xml = parse_string("""
+<CreateQueueResponse>
+    <CreateQueueResult>
+        <QueueUrl>http://queue.amazonaws.com/123456789012/testQueue</QueueUrl>
+    </CreateQueueResult>
+</CreateQueueResponse>
+""")
+
+@test xml["CreateQueueResult"]["QueueUrl"] ==
+      "http://queue.amazonaws.com/123456789012/testQueue"
+```
+
+Extract an attribute from a tag:
+
+```julia
+xml = parse_string("""
+<bookstore>
+  <book category="COOKING" tag="first"/>
+<bookstore>
+
+@test xml["bookstore"]["book"][:category] == "COOKING"
+```
+
+
+Extract a list of tag content:
+
+```julia
+xml = parse_string("""
+<ListAllMyBucketsResult>
+  <Buckets>
+    <Bucket><Name>quotes</Name><CreationDate>2006-02-03T16:45:09.000Z</CreationDate></Bucket>
+    <Bucket><Name>samples</Name><CreationDate>2006-02-03T16:41:58.000Z</CreationDate></Bucket>
+  </Buckets>
+</ListAllMyBucketsResult>
+""")
+
+@test [b["Name"] in xml["Buckets"]["Bucket"]] == ["quotes", "samples"]
+```
+
+Extract a dictionary of tag content:
+
+```julia
+
+xml = parse_string("""
+<GetQueueAttributesResponse>
+  <GetQueueAttributesResult>
+    <Attribute><Name>VisibilityTimeout</Name><Value>30</Value></Attribute>
+    <Attribute><Name>CreatedTimestamp</Name><Value>1286771522</Value></Attribute>
+    <Attribute><Name>MaximumMessageSize</Name><Value>8192</Value></Attribute>
+    <Attribute><Name>MessageRetentionPeriod</Name><Value>345600</Value></Attribute>
+  </GetQueueAttributesResult>
+</GetQueueAttributesResponse>
+""")
+
+d = [a["Name"] => a["Value"] for a in xml["GetQueueAttributesResult"]["Attribute"]]
+
+Dict with 4 entries:
+  "MessageRetentionPeriod" => "345600"
+  "MaximumMessageSize"     => "8192"
+  "VisibilityTimeout"      => "30"
+  "CreatedTimestamp"       => "1286771522"
+```
+
+
+
 #### Create an XML Document
 
 This package allows you to construct an XML document programmatically. For example, to create an XML document as
