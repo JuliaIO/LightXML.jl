@@ -38,6 +38,13 @@ res = evalxpath(xpath, xdoc)
 @test isa(res[1], XMLNode)
 @test name(res[1]) == "wikimedia"
 
+xpath = "/foobarbaz"
+res = evalxpath(xpath, xdoc)
+@test isempty(res)
+
+xpath = "this is invalid xpath."
+@test_throws ErrorException evalxpath(xpath, xdoc)
+
 for xpath in ["/wikimedia/projects/project", "//project"]
     res = evalxpath(xpath, xdoc)
     @test length(res) == 2

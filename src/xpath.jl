@@ -4,7 +4,7 @@ type XPathContext
         ptr = ccall(
             (:xmlXPathNewContext, libxml2),
             Xptr,
-            (Ptr{Void},),
+            (Xptr,),
             doc.ptr)
         if ptr == C_NULL
             error("failed to create an XPathContext")
@@ -19,8 +19,20 @@ immutable _XMLNodeSet
     nodeTab::Ptr{Ptr{_XMLNodeStruct}}
 end
 
+# enum xmlXPathObjectType
+const XPATH_UNDEFINED = 0
+const XPATH_NODESET = 1
+const XPATH_BOOLEAN = 2
+const XPATH_NUMBER = 3
+const XPATH_STRING = 4
+const XPATH_POINT = 5
+const XPATH_RANGE = 6
+const XPATH_LOCATIONSET = 7
+const XPATH_USERS = 8
+const XPATH_XSLT_TREE = 9
+
 immutable _XMLXPathObject
-    _type::Cint  # is this OK?
+    _type::Cint  # xmlXPathObjectType
     nodesetval::Ptr{_XMLNodeSet}
     boolval::Cint
     floatval::Cdouble
@@ -38,8 +50,16 @@ type XPathObject
     end
 end
 
+function nodesetval(obj::XPathObject)
+    return unsafe_load(unsafe_load(obj.ptr).nodesetval)
+end
+
 function Base.length(obj::XPathObject)
-    return unsafe_load(unsafe_load(obj.ptr).nodesetval).nodeNr
+    return nodesetval(obj).nodeNr
+end
+
+function Base.isempty(obj::XPathObject)
+    return length(obj) == 0
 end
 
 function Base.endof(obj::XPathObject)
@@ -47,12 +67,12 @@ function Base.endof(obj::XPathObject)
 end
 
 function Base.getindex(obj::XPathObject, i::Integer)
-    struct = unsafe_load(unsafe_load(unsafe_load(obj.ptr).nodesetval).nodeTab, i)
+    struct = unsafe_load(nodesetval(obj).nodeTab, i)
     return XMLNode(reinterpret(Xptr, struct))
 end
 
 Base.start(obj::XPathObject)   = 1
-Base.done(obj::XPathObject, i) = i > length(obj)
+Base.done(obj::XPathObject, i) = i > endof(obj)
 Base.next(obj::XPathObject, i) = obj[i], i + 1
 
 function evalxpath(xpath::AbstractString, ctx::XPathContext)
