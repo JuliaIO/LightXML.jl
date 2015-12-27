@@ -184,7 +184,7 @@ function Base.string(nd::XMLNode)
     return r
 end
 
-Base.show(io::IO, nd::XMLNode) = println(io, string(nd))
+Base.show(io::IO, nd::XMLNode) = print(io, string(nd))
 
 
 #######################################
