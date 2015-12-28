@@ -13,6 +13,19 @@ type XPathContext
     end
 end
 
+# register a namespace
+function registerns!(ctx::XPathContext, prefix::AbstractString, uri::AbstractString)
+    ret = ccall(
+        (:xmlXPathRegisterNs, libxml2),
+        Cint,
+        (Xptr, Cstring, Cstring),
+        ctx.ptr, prefix, uri)
+    if ret != 0
+        error("failed to register the namespace")
+    end
+    return
+end
+
 immutable _XMLNodeSet
     nodeNr::Cint
     nodeMax::Cint

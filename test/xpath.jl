@@ -42,7 +42,7 @@ xpath = "/foobarbaz"
 res = evalxpath(xpath, xdoc)
 @test isempty(res)
 
-xpath = "this is invalid xpath."
+xpath = "this is an invalid xpath."
 @test_throws ErrorException evalxpath(xpath, xdoc)
 
 for xpath in ["/wikimedia/projects/project", "//project"]
@@ -74,3 +74,19 @@ res = evalxpath(xpath, xdoc)
 @test name(res[2]) == "text"
 @test content(res[1]) == "en.wikipedia.org"
 @test content(res[2]) == "en.wiktionary.org"
+
+# namespace
+xdoc = parse_string("""
+<?xml version="1.0"?>
+<root xmlns:foo="http://example.com/foo"
+      xmlns:bar="http://example.com/bar">
+    <foo:tag>FooTag</foo:tag>
+    <bar:tag>BarTag</bar:tag>
+</root>
+""")
+ctx = LightXML.XPathContext(xdoc)
+registerns!(ctx, "foo", "http://example.com/foo")
+res = evalxpath("/root/foo:tag", ctx)
+@test length(res) == 1
+@test content(res[1]) == "FooTag"
+@test_throws ErrorException evalxpath("/root/bar:tag", ctx)

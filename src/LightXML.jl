@@ -27,7 +27,7 @@ export
     parse_file, parse_string, save_file, set_root, create_root,
 
     # xpath
-    evalxpath
+    evalxpath, registerns!
 
 typealias Xchar UInt8
 typealias Xstr Ptr{Xchar}
