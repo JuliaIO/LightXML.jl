@@ -7,10 +7,16 @@ type XPathContext
             (Xptr,),
             doc.ptr)
         if ptr == C_NULL
-            error("failed to create an XPathContext")
+            error("failed to create an XPathContext object")
         end
-        return new(ptr)
+        ctx = new(ptr)
+        finalizer(ctx, free)
+        return ctx
     end
+end
+
+function free(ctx::XPathContext)
+    ccall((:xmlXPathFreeContext, libxml2), Void, (Xptr,), ctx.ptr)
 end
 
 # register a namespace
@@ -26,13 +32,17 @@ function registerns!(ctx::XPathContext, prefix::AbstractString, uri::AbstractStr
     return
 end
 
-immutable _XMLNodeSet
+# C struct: _xmlNodeSet
+immutable _xmlNodeSet
+    # number of nodes in the set
     nodeNr::Cint
+    # size of the array as allocated
     nodeMax::Cint
+    # array of nodes in no particular order
     nodeTab::Ptr{Ptr{_XMLNodeStruct}}
 end
 
-# enum xmlXPathObjectType
+# C enum: xmlXPathObjectType
 const XPATH_UNDEFINED = 0
 const XPATH_NODESET = 1
 const XPATH_BOOLEAN = 2
@@ -44,9 +54,10 @@ const XPATH_LOCATIONSET = 7
 const XPATH_USERS = 8
 const XPATH_XSLT_TREE = 9
 
-immutable _XMLXPathObject
+# C struct: _xmlXPathObject
+immutable _xmlXPathObject
     _type::Cint  # xmlXPathObjectType
-    nodesetval::Ptr{_XMLNodeSet}
+    nodesetval::Ptr{_xmlNodeSet}
     boolval::Cint
     floatval::Cdouble
     stringval::Cstring
@@ -57,41 +68,51 @@ immutable _XMLXPathObject
 end
 
 type XPathObject
-    ptr::Ptr{_XMLXPathObject}
+    ptr::Ptr{_xmlXPathObject}
     function XPathObject(ptr::Ptr)
-        return new(ptr)
+        xpath = new(ptr)
+        finalizer(xpath, free)
+        return xpath
     end
 end
 
-function nodesetval(obj::XPathObject)
-    return unsafe_load(unsafe_load(obj.ptr).nodesetval)
+function free(xpath::XPathObject)
+    ccall((:xmlXPathFreeObject, libxml2), Void, (Xptr,), xpath.ptr)
 end
 
-function Base.length(obj::XPathObject)
-    return nodesetval(obj).nodeNr
+function nodesetval(xpath::XPathObject)
+    return unsafe_load(unsafe_load(xpath.ptr).nodesetval)
 end
 
-function Base.isempty(obj::XPathObject)
-    return length(obj) == 0
+function Base.length(xpath::XPathObject)
+    return nodesetval(xpath).nodeNr
 end
 
-function Base.endof(obj::XPathObject)
-    return length(obj)
+function Base.isempty(xpath::XPathObject)
+    return length(xpath) == 0
 end
 
-function Base.getindex(obj::XPathObject, i::Integer)
-    struct = unsafe_load(nodesetval(obj).nodeTab, i)
+function Base.endof(xpath::XPathObject)
+    return length(xpath)
+end
+
+function Base.getindex(xpath::XPathObject, i::Integer)
+    if !(1 ≤ i ≤ endof(xpath))
+        throw(BoundsError(i))
+    end
+    @assert nodesetval(xpath).nodeTab != C_NULL
+    struct = unsafe_load(nodesetval(xpath).nodeTab, i)
     return XMLNode(reinterpret(Xptr, struct))
 end
 
-Base.start(obj::XPathObject)   = 1
-Base.done(obj::XPathObject, i) = i > endof(obj)
-Base.next(obj::XPathObject, i) = obj[i], i + 1
+Base.start(xpath::XPathObject)   = 1
+Base.done(xpath::XPathObject, i) = i > endof(xpath)
+Base.next(xpath::XPathObject, i) = xpath[i], i + 1
 
 function evalxpath(xpath::AbstractString, ctx::XPathContext)
     ptr = ccall(
         (:xmlXPathEvalExpression, libxml2),
-        Ptr{_XMLXPathObject},
+        Ptr{_xmlXPathObject},
         (Cstring, Xptr),
         xpath, ctx.ptr)
     if ptr == C_NULL

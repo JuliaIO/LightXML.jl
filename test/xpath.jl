@@ -31,6 +31,8 @@ xpath = "/"
 res = evalxpath(xpath, xdoc)
 @test isa(res, LightXML.XPathObject)
 @test length(res) == 1
+@test_throws BoundsError res[0]
+@test_throws BoundsError res[2]
 
 xpath = "/wikimedia"
 res = evalxpath(xpath, xdoc)
@@ -41,6 +43,7 @@ res = evalxpath(xpath, xdoc)
 xpath = "/foobarbaz"
 res = evalxpath(xpath, xdoc)
 @test isempty(res)
+@test_throws BoundsError res[1]
 
 xpath = "this is an invalid xpath."
 @test_throws ErrorException evalxpath(xpath, xdoc)
