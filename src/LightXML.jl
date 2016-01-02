@@ -44,5 +44,6 @@ include("utils.jl")
 include("nodes.jl")
 include("document.jl")
 include("cdata.jl")
+include("getindex.jl")
 
 end

@@ -1,4 +1,4 @@
-tests = ["parse", "create", "cdata"]
+tests = ["parse", "create", "cdata", "getindex"]
 
 for t in tests
     fpath = "$t.jl"
