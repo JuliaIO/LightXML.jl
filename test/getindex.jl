@@ -153,6 +153,8 @@ xml5 = """
 
 @test xdict(xml5)["ListDomainsResult"][:foobar] == "Hello"
 
+if Pkg.installed("DataStructures") != nothing
+
 
 xml6 = """
 <?xml version="1.0" encoding="UTF-8"?>
@@ -188,7 +190,7 @@ function normalise_xml(xml)
     readall(o)
 end
 
-using JSON
+eval(Expr(:using, :JSON))
 
 for xml in [xml1, xml2, xml3, xml4, xml5, xml6]
 
@@ -213,3 +215,6 @@ for xml in [xml1, xml2, xml3, xml4, xml5, xml6]
     @test normalise_xml(xml) == normalise_xml(dict_xml(xml_dict(xml)))
 
 end
+
+
+end #if Pkg.installed("DataStructures") != nothing

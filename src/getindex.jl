@@ -28,15 +28,22 @@ Base.haskey(x::XMLDocument, tag) = haskey(root(x), tag)
 Base.get(x::XMLDocument, tag, default) = get(root(x), tag, default)
 
 
+
+
+if Pkg.installed("DataStructures") != nothing
+    eval(Expr(:using,:DataStructures))
+    const default_dict_type = OrderedDict
+else
+    const default_dict_type = Dict
+end
+
 # Convert XMLDocument to OrderedDict...
 
-using DataStructures
-
-function xml_dict(x::AbstractString, dict_type::Type=OrderedDict; options...)
+function xml_dict(x::AbstractString, dict_type::Type=default_dict_type; options...)
     xml_dict(parse_string(x), dict_type; options...)
 end
 
-function xml_dict(x::XMLDocument, dict_type::Type=OrderedDict; options...)
+function xml_dict(x::XMLDocument, dict_type::Type=default_dict_type; options...)
     r = dict_type()
     r[:version] = version(x)
     if encoding(x) != nothing
