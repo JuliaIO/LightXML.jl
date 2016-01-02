@@ -345,3 +345,11 @@ function set_attributes(x::XMLElement; attrs...)
         set_attribute(x, string(nam), string(val))
     end
 end
+
+
+function escape(s::AbstractString)
+    p = ccall((:xmlEncodeEntitiesReentrant,libxml2), Xstr, (Xptr, Cstring), C_NULL, s)
+    (p != C_NULL ? _xcopystr(p) : "")::AbstractString
+end
+
+
