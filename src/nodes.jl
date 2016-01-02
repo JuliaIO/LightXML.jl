@@ -287,6 +287,8 @@ function get_elements_by_tagname(x::XMLElement, n::AbstractString)
     return lst
 end
 
+Base.getindex(x::XMLElement, name::AbstractString) = get_elements_by_tagname(x, name)
+
 
 #######################################
 #
