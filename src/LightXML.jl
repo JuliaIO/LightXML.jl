@@ -2,7 +2,7 @@ VERSION >= v"0.4.0-dev+6521" && __precompile__()
 
 module LightXML
 
-using Compat
+using Compat; import Compat.String
 
 const libxml2 = @windows? Pkg.dir("WinRPM","deps","usr","$(Sys.ARCH)-w64-mingw32","sys-root","mingw","bin","libxml2-2") : "libxml2"
 
