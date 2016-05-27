@@ -4,6 +4,18 @@ module LightXML
 
 using Compat
 
+# iteratorsize is new in 0.5, declare it here for older versions. However,
+# we do not actually support calling these, since the traits are not defined
+if VERSION < v"0.5.0-dev+3305"
+    function iteratorsize(v)
+        error("Do not call this on older versions")
+    end
+else
+    import Base: iteratorsize, SizeUnknown, IsInfinite, HasLength
+end
+
+
+
 const libxml2 = @windows? Pkg.dir("WinRPM","deps","usr","$(Sys.ARCH)-w64-mingw32","sys-root","mingw","bin","libxml2-2") : "libxml2"
 
 export
