@@ -1,7 +1,7 @@
 ## LightXML.jl
 
 [![Build Status](https://travis-ci.org/JuliaIO/LightXML.jl.svg?branch=master)](https://travis-ci.org/JuliaIO/LightXML.jl)
-[![Build status](https://ci.appveyor.com/api/projects/status/si07guw1bbn4srtw/branch/master?svg=true)](https://ci.appveyor.com/project/tkelman/lightxml-jl/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/14l097yi92frqkqm/branch/master?svg=true)](https://ci.appveyor.com/project/tkelman/lightxml-jl/branch/master)
 [![LightXML](http://pkg.julialang.org/badges/LightXML_0.3.svg)](http://pkg.julialang.org/?pkg=LightXML&ver=0.3)
 [![LightXML](http://pkg.julialang.org/badges/LightXML_0.4.svg)](http://pkg.julialang.org/?pkg=LightXML&ver=0.4)
 
