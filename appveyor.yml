@@ -11,6 +11,7 @@ branches:
   only:
     - master
     - /release-.*/
+    - tk/avtest
 
 notifications:
   - provider: Email
@@ -30,6 +31,7 @@ build_script:
 # Need to convert from shallow to complete for Pkg.clone to work
   - IF EXIST .git\shallow (git fetch --unshallow)
   - C:\projects\julia\bin\julia -F -e "versioninfo();
+      Pkg.add(\"WinRPM\"); Pkg.checkout(\"WinRPM\", \"tk/legacystrings\");
       Pkg.clone(pwd(), \"LightXML\"); Pkg.build(\"LightXML\")"
 
 test_script:
