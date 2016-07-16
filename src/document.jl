@@ -53,8 +53,8 @@ type XMLDocument
     end
 end
 
-version(xdoc::XMLDocument) = bytestring(xdoc._struct.version)
-encoding(xdoc::XMLDocument) = bytestring(xdoc._struct.encoding)
+version(xdoc::XMLDocument) = unsafe_string(xdoc._struct.version)
+encoding(xdoc::XMLDocument) = unsafe_string(xdoc._struct.encoding)
 compression(xdoc::XMLDocument) = @compat Int(xdoc._struct.compression)
 standalone(xdoc::XMLDocument) = @compat Int(xdoc._struct.standalone)
 

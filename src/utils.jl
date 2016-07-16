@@ -16,4 +16,4 @@ free(buf::XBuffer) = ccall((:xmlBufferFree,libxml2), Void, (Xptr,), buf.ptr)
 
 Base.length(buf::XBuffer) = int(ccall((:xmlBufferLength,libxml2), Cint, (Xptr,), buf.ptr))
 
-content(buf::XBuffer) = bytestring(ccall((:xmlBufferContent,libxml2), Xstr, (Xptr,), buf.ptr))
+content(buf::XBuffer) = unsafe_string(ccall((:xmlBufferContent,libxml2), Xstr, (Xptr,), buf.ptr))

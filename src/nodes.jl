@@ -82,7 +82,7 @@ type XMLAttr
     end
 end
 
-name(a::XMLAttr) = bytestring(a._struct.name)
+name(a::XMLAttr) = unsafe_string(a._struct.name)
 
 function value(a::XMLAttr)
     pct = ccall((:xmlNodeGetContent,libxml2), Xstr, (Xptr,), a._struct.children)
@@ -110,7 +110,7 @@ immutable _XMLNodeStruct
     # common part
     _private::Ptr{Void}
     nodetype::Cint
-    name::Ptr{Cchar}
+    name::Ptr{UInt8}
     children::Xptr
     last::Xptr
     parent::Xptr
@@ -138,7 +138,7 @@ type XMLNode <: AbstractXMLNode
     end
 end
 
-name(nd::XMLNode) = bytestring(nd._struct.name)
+name(nd::XMLNode) = unsafe_string(nd._struct.name)
 nodetype(nd::XMLNode) = nd._struct.nodetype
 has_children(nd::XMLNode) = (nd._struct.children != C_NULL)
 

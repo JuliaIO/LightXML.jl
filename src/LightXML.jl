@@ -15,8 +15,11 @@ else
 end
 
 
-
-const libxml2 = @windows? Pkg.dir("WinRPM","deps","usr","$(Sys.ARCH)-w64-mingw32","sys-root","mingw","bin","libxml2-2") : "libxml2"
+if is_windows()
+    const libxml2 = Pkg.dir("WinRPM","deps","usr","$(Sys.ARCH)-w64-mingw32","sys-root","mingw","bin","libxml2-2")
+else
+    const libxml2 = "libxml2"
+end
 
 export
 
@@ -48,7 +51,11 @@ typealias Xptr Ptr{xmlBuffer}
 # pre-condition: p is not null
 # (After tests, it seems that free in libc instead of xmlFree
 #  should be used here.)
-_xcopystr(p::Xstr) = (r = bytestring(p); Libc.free(p); r)
+function _xcopystr(p::Xstr)
+    r = unsafe_string(p)
+    Libc.free(p)
+    return r
+end
 
 include("errors.jl")
 
