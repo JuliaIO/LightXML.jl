@@ -275,6 +275,8 @@ e = new_child(parent, name)    # create a new element and add it as a child
 add_text(e, text)              # add text content to an element
                                # equiv. to new_textnode + add_child
 
+set_content(e, text)           # replace text content of an element
+
 add_cdata(xdoc, e, text)       # add cdata content to an element
                                # equiv. to new_cdatanode + add_child
 

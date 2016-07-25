@@ -13,7 +13,13 @@ add_text(xs2, "Illinois")
 set_attributes(xs2, @compat Dict{Any,Any}("tag"=>"IL", "cap"=>"Springfield"))
 
 xs3 = new_child(xroot, "State")
-add_text(xs3, "California")
+add_text(xs3, "California typo")
+
+set_content(xs3, "California typo again")
+@assert content(xs3) == "California typo again"
+set_content(xs3, "California")
+@assert content(xs3) == "California"
+
 set_attributes(xs3; tag="CA", cap="Sacramento")
 
 rtxt1 = """
