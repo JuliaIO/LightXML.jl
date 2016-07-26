@@ -349,6 +349,6 @@ function set_attributes(x::XMLElement; attrs...)
 end
 
 function set_content(x::XMLElement, txt::AbstractString)
-    ccall(("xmlNodeSetContent", libxml2), Xptr, (Xptr , Cstring,), x.node.ptr, txt)
+    ccall((:xmlNodeSetContent, libxml2), Xptr, (Xptr, Cstring,), x.node.ptr, txt)
     x
 end
