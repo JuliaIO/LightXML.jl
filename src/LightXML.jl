@@ -35,7 +35,7 @@ export
     child_elements, find_element, get_elements_by_tagname,
 
     new_element, add_child, new_child, new_textnode, add_text, add_cdata,
-    set_attribute, set_attributes, unlink,
+    set_attribute, set_attributes, unlink, set_content,
 
     # document
     XMLDocument, version, encoding, compression, standalone, root,
