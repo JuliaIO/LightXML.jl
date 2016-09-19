@@ -85,6 +85,8 @@ ces = collect(child_elements(xroot))  # get a list of all child elements
 
 # if you know the child element tagname, you can instead get a list as
 ces = get_elements_by_tagname(xroot, "book")
+# or shorthand:
+ces = xroot["book"]
 
 e1 = ces[1]  # the first book element
 
@@ -241,7 +243,7 @@ find_element(e, name)   # the first element of specified name under e
                         # return nothing is no such an element is found
 
 get_elements_by_tagname(e, name)  # a list of all child elements of e with
-                                  # the specified name
+                                  # the specified name. Equivalent to e[name]
 
 string(e)               # format an XML element into a string
 show(io, e)             # output formatted XML element
