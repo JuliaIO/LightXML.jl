@@ -108,7 +108,7 @@ xb2 = XMLElement(rcs[4])
 # test get_elements_by_tagname and getindex
 rces_by_tagname = get_elements_by_tagname(xroot, "book")
 rces_by_getindex = xroot["book"]
-for rces in [rces_by_getindex, rces_by_tagname]
+for rces in (rces_by_getindex, rces_by_tagname)
     @test length(rces) == 2
     @test isa(rces, Vector{XMLElement})
     @test attribute(rces[1], "category") == "COOKING"
