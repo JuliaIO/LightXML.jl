@@ -105,13 +105,15 @@ xb2 = XMLElement(rcs[4])
 @test is(attribute(xb2, "wrongattr"), nothing)
 @test_throws LightXML.XMLAttributeNotFound attribute(xb2, "wrongattr"; required=true)
 
-rces = get_elements_by_tagname(xroot, "book")
-@test length(rces) == 2
-@test isa(rces, Vector{XMLElement})
-@test attribute(rces[1], "category") == "COOKING"
-@test attribute(rces[2], "category") == "CHILDREN"
-
-# child elements of book[1]
+# test get_elements_by_tagname and getindex
+rces_by_tagname = get_elements_by_tagname(xroot, "book")
+rces_by_getindex = xroot["book"]
+for rces in (rces_by_getindex, rces_by_tagname)
+    @test length(rces) == 2
+    @test isa(rces, Vector{XMLElement})
+    @test attribute(rces[1], "category") == "COOKING"
+    @test attribute(rces[2], "category") == "CHILDREN"
+end
 
 ces = collect(child_elements(xb1))
 
