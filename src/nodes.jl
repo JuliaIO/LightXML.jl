@@ -280,7 +280,7 @@ function find_element(x::XMLElement, n::AbstractString)
 end
 
 function get_elements_by_tagname(x::XMLElement, n::AbstractString)
-    lst = Array(XMLElement, 0)
+    lst = Array{XMLElement,1}()
     for c in child_elements(x)
         if name(c) == n
             push!(lst, c)
