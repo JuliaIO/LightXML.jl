@@ -2,7 +2,7 @@ VERSION >= v"0.4.0-dev+6521" && __precompile__()
 
 module LightXML
 
-using Compat; import Compat.String
+using Compat; using Compat.String
 
 # iteratorsize is new in 0.5, declare it here for older versions. However,
 # we do not actually support calling these, since the traits are not defined
@@ -41,12 +41,12 @@ export
     XMLDocument, version, encoding, compression, standalone, root,
     parse_file, parse_string, save_file, set_root, create_root
 
-typealias Xchar UInt8
-typealias Xstr Ptr{Xchar}
+const Xchar = UInt8
+const Xstr = Ptr{Xchar}
 
 # opaque pointer type (do not dereference!) corresponding to xmlBufferPtr in C
 immutable xmlBuffer end
-typealias Xptr Ptr{xmlBuffer}
+const Xptr = Ptr{xmlBuffer}
 
 # pre-condition: p is not null
 # (After tests, it seems that free in libc instead of xmlFree
