@@ -2,7 +2,7 @@ VERSION >= v"0.4.0-dev+6521" && __precompile__()
 
 module LightXML
 
-using Compat; using Compat.String
+using Compat; import Compat.String
 
 # iteratorsize is new in 0.5, declare it here for older versions. However,
 # we do not actually support calling these, since the traits are not defined
