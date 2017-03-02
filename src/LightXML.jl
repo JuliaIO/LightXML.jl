@@ -41,12 +41,12 @@ export
     XMLDocument, version, encoding, compression, standalone, root,
     parse_file, parse_string, save_file, set_root, create_root
 
-typealias Xchar UInt8
-typealias Xstr Ptr{Xchar}
+const Xchar = UInt8
+const Xstr = Ptr{Xchar}
 
 # opaque pointer type (do not dereference!) corresponding to xmlBufferPtr in C
 immutable xmlBuffer end
-typealias Xptr Ptr{xmlBuffer}
+const Xptr = Ptr{xmlBuffer}
 
 # pre-condition: p is not null
 # (After tests, it seems that free in libc instead of xmlFree
