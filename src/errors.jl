@@ -36,6 +36,5 @@ const dom_exception_causes = [
 immutable DOMException{T<:AbstractString} <: XMLError
     code::Int
     cause::T
-
-    DOMException(code::Int) = new(code, dom_exception_causes[code])
 end
+DOMException(code::Integer) = DOMException(code, dom_exception_causes[code])
