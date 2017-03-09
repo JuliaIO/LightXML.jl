@@ -102,7 +102,7 @@ xb2 = XMLElement(rcs[4])
 @test attribute(xb2, "category") == "CHILDREN"
 
 @test !has_attribute(xb2, "wrongattr")
-@test is(attribute(xb2, "wrongattr"), nothing)
+@test attribute(xb2, "wrongattr") === nothing
 @test_throws LightXML.XMLAttributeNotFound attribute(xb2, "wrongattr"; required=true)
 
 # test get_elements_by_tagname and getindex
@@ -154,7 +154,7 @@ cy = find_element(xb1, "year")
 @test content(cy) == "2005"
 
 cz = find_element(xb1, "abc")
-@test is(cz, nothing)
+@test cz === nothing
 
 free(xdoc)
 end
