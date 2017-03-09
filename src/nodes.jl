@@ -1,6 +1,6 @@
 # XML nodes
 
-abstract AbstractXMLNode
+@compat abstract type AbstractXMLNode end
 
 #### Types of attributes
 
