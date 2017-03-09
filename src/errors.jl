@@ -1,5 +1,5 @@
 
-abstract XMLError <: Exception
+@compat abstract type XMLError <: Exception end
 
 immutable XMLParseError{T<:AbstractString} <: XMLError
     msg::T
