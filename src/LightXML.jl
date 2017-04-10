@@ -39,7 +39,7 @@ export
 
     # document
     XMLDocument, version, encoding, compression, standalone, root,
-    parse_file, parse_string, save_file, set_root, create_root
+    save_file, set_root, create_root
 
 const Xchar = UInt8
 const Xstr = Ptr{Xchar}
