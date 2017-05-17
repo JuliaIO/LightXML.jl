@@ -85,12 +85,14 @@ end
 #### parse and free
 
 function parse_file(filename::AbstractString)
+    ccall((:xmlSubstituteEntitiesDefault, libxml2), Cint, (Cint,), 1)
     p = ccall((:xmlParseFile,libxml2), Xptr, (Cstring,), filename)
     p != C_NULL || throw(XMLParseError("Failure in parsing an XML file."))
     XMLDocument(p)
 end
 
 function parse_file(filename::AbstractString, encoding, options::Integer)
+    ccall((:xmlSubstituteEntitiesDefault, libxml2), Cint, (Cint,), 1)
     p = ccall((:xmlReadFile,libxml2), Xptr, (Cstring, Ptr{Cchar}, Cint),
         filename, encoding, options)
     p != C_NULL || throw(XMLParseError("Failure in parsing an XML file."))
@@ -98,6 +100,7 @@ function parse_file(filename::AbstractString, encoding, options::Integer)
 end
 
 function parse_string(s::AbstractString)
+    ccall((:xmlSubstituteEntitiesDefault, libxml2), Cint, (Cint,), 1)
     p = ccall((:xmlParseMemory,libxml2), Xptr, (Xstr, Cint), s, sizeof(s) + 1)
     p != C_NULL || throw(XMLParseError("Failure in parsing an XML string."))
     XMLDocument(p)
