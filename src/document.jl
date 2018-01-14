@@ -1,9 +1,9 @@
 
 #### Document type
 
-immutable _XMLDocStruct  # use the same layout as C
+struct _XMLDocStruct  # use the same layout as C
     # common part
-    _private::Ptr{Void}
+    _private::Ptr{Cvoid}
     nodetype::Cint
     name::Xstr
     children::Xptr
@@ -22,17 +22,17 @@ immutable _XMLDocStruct  # use the same layout as C
     version::Xstr
     encoding::Xstr
 
-    ids::Ptr{Void}
-    refs::Ptr{Void}
+    ids::Ptr{Cvoid}
+    refs::Ptr{Cvoid}
     url::Xstr
     charset::Cint
     dict::Xstr
-    psvi::Ptr{Void}
+    psvi::Ptr{Cvoid}
     parseflags::Cint
     properties::Cint
 end
 
-type XMLDocument
+mutable struct XMLDocument
     ptr::Xptr
     _struct::_XMLDocStruct
 
@@ -55,8 +55,8 @@ end
 
 version(xdoc::XMLDocument) = unsafe_string(xdoc._struct.version)
 encoding(xdoc::XMLDocument) = unsafe_string(xdoc._struct.encoding)
-compression(xdoc::XMLDocument) = @compat Int(xdoc._struct.compression)
-standalone(xdoc::XMLDocument) = @compat Int(xdoc._struct.standalone)
+compression(xdoc::XMLDocument) = Int(xdoc._struct.compression)
+standalone(xdoc::XMLDocument) = Int(xdoc._struct.standalone)
 
 function root(xdoc::XMLDocument)
     pr = ccall((:xmlDocGetRootElement,libxml2), Xptr, (Xptr,), xdoc.ptr)
@@ -68,7 +68,7 @@ end
 #### construction & free
 
 function free(xdoc::XMLDocument)
-    ccall((:xmlFreeDoc,libxml2), Void, (Xptr,), xdoc.ptr)
+    ccall((:xmlFreeDoc,libxml2), Cvoid, (Xptr,), xdoc.ptr)
     xdoc.ptr = C_NULL
 end
 
@@ -107,20 +107,20 @@ end
 #### output
 
 function save_file(xdoc::XMLDocument, filename::AbstractString; encoding::AbstractString="utf-8")
-    ret = ccall((:xmlSaveFormatFileEnc,libxml2), Cint, (Cstring, Xptr, Cstring, Cint),
-        filename, xdoc.ptr, encoding, 1)
-    if ret < 0
-        throw(XMLWriteError("Failed to save XML to file $filename"))
-    end
-    return @compat Int(ret)  # number of bytes written
+    ret = ccall((:xmlSaveFormatFileEnc,libxml2), Cint,
+                (Cstring, Xptr, Cstring, Cint),
+                filename, xdoc.ptr, encoding, 1)
+    ret < 0 && throw(XMLWriteError("Failed to save XML to file $filename"))
+    Int(ret)  # number of bytes written
 end
 
-function Base.string(xdoc::XMLDocument; encoding::AbstractString="utf-8")
-    buf_out = Vector{Xstr}(1)
-    len_out = Vector{Cint}(1)
-    ccall((:xmlDocDumpFormatMemoryEnc,libxml2), Void, (Xptr, Ptr{Xstr}, Ptr{Cint}, Cstring, Cint),
-        xdoc.ptr, buf_out, len_out, encoding, 1)
+function string(xdoc::XMLDocument; encoding::AbstractString="utf-8")
+    buf_out = create_vector(Xstr, 1)
+    len_out = create_vector(Cint, 1)
+    ccall((:xmlDocDumpFormatMemoryEnc,libxml2), Cvoid,
+          (Xptr, Ptr{Xstr}, Ptr{Cint}, Cstring, Cint),
+          xdoc.ptr, buf_out, len_out, encoding, 1)
     _xcopystr(buf_out[1])
 end
 
-Base.show(io::IO, xdoc::XMLDocument) = print(io, string(xdoc))
+show(io::IO, xdoc::XMLDocument) = print(io, string(xdoc))

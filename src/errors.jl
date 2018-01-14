@@ -1,20 +1,17 @@
+abstract type XMLError <: Exception end
 
-@compat abstract type XMLError <: Exception end
+struct XMLNoRootError <: XMLError ; end
 
-immutable XMLParseError{T<:AbstractString} <: XMLError
+struct XMLAttributeNotFound <: XMLError ; end
+
+struct XMLParseError{T<:AbstractString} <: XMLError
     msg::T
 end
 
-immutable XMLNoRootError <: XMLError
-end
-
-immutable XMLAttributeNotFound <: XMLError
-end
-
-immutable XMLWriteError{T<:AbstractString} <: XMLError
+struct XMLWriteError{T<:AbstractString} <: XMLError
     msg::T
 end
 
-immutable XMLTreeError{T<:AbstractString} <: XMLError
+struct XMLTreeError{T<:AbstractString} <: XMLError
     msg::T
 end

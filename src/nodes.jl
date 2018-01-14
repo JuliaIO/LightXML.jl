@@ -1,6 +1,6 @@
 # XML nodes
 
-@compat abstract type AbstractXMLNode end
+abstract type AbstractXMLNode end
 
 #### Types of attributes
 
@@ -53,9 +53,9 @@ is_cdatanode(nd::AbstractXMLNode) = (nodetype(nd) == XML_CDATA_SECTION_NODE)
 #
 #######################################
 
-immutable _XMLAttrStruct
+struct _XMLAttrStruct
     # common part
-    _private::Ptr{Void}
+    _private::Ptr{Cvoid}
     nodetype::Cint
     name::Xstr
     children::Xptr
@@ -68,10 +68,10 @@ immutable _XMLAttrStruct
     # specific part
     ns::Xptr
     atype::Cint
-    psvi::Ptr{Void}
+    psvi::Ptr{Cvoid}
 end
 
-type XMLAttr
+mutable struct XMLAttr
     ptr::Xptr
     _struct::_XMLAttrStruct
 
@@ -91,14 +91,14 @@ end
 
 # iterations
 
-immutable XMLAttrIter
+struct XMLAttrIter
     p::Xptr
 end
 
-Base.start(it::XMLAttrIter) = it.p
-Base.done(it::XMLAttrIter, p::Xptr) = (p == C_NULL)
-Base.next(it::XMLAttrIter, p::Xptr) = (a = XMLAttr(p); (a, a._struct.next))
-iteratorsize(::Type{XMLAttrIter}) = SizeUnknown()
+start(it::XMLAttrIter) = it.p
+done(it::XMLAttrIter, p::Xptr) = (p == C_NULL)
+next(it::XMLAttrIter, p::Xptr) = (a = XMLAttr(p); (a, a._struct.next))
+IteratorSize(::Type{XMLAttrIter}) = SizeUnknown()
 
 #######################################
 #
@@ -106,9 +106,9 @@ iteratorsize(::Type{XMLAttrIter}) = SizeUnknown()
 #
 #######################################
 
-immutable _XMLNodeStruct
+struct _XMLNodeStruct
     # common part
-    _private::Ptr{Void}
+    _private::Ptr{Cvoid}
     nodetype::Cint
     name::Ptr{UInt8}
     children::Xptr
@@ -123,12 +123,12 @@ immutable _XMLNodeStruct
     content::Xstr
     attrs::Xptr
     nsdef::Xptr
-    psvi::Ptr{Void}
+    psvi::Ptr{Cvoid}
     line::Cushort
     extra::Cushort
 end
 
-type XMLNode <: AbstractXMLNode
+mutable struct XMLNode <: AbstractXMLNode
     ptr::Xptr
     _struct::_XMLNodeStruct
 
@@ -143,27 +143,27 @@ nodetype(nd::XMLNode) = nd._struct.nodetype
 has_children(nd::XMLNode) = (nd._struct.children != C_NULL)
 
 # whether it is a white-space only text node
-is_blanknode(nd::XMLNode) = @compat Bool(ccall((:xmlIsBlankNode,libxml2), Cint, (Xptr,), nd.ptr))
+is_blanknode(nd::XMLNode) = Bool(ccall((:xmlIsBlankNode,libxml2), Cint, (Xptr,), nd.ptr))
 
 function free(nd::XMLNode)
-    ccall((:xmlFreeNode,libxml2), Void, (Xptr,), nd.ptr)
+    ccall((:xmlFreeNode,libxml2), Cvoid, (Xptr,), nd.ptr)
     nd.ptr = C_NULL
 end
 
 function unlink(nd::XMLNode)
-    ccall((:xmlUnlinkNode,libxml2), Void, (Xptr,), nd.ptr)
+    ccall((:xmlUnlinkNode,libxml2), Cvoid, (Xptr,), nd.ptr)
 end
 
 # iteration over children
 
-immutable XMLNodeIter
+struct XMLNodeIter
     p::Xptr
 end
 
-Base.start(it::XMLNodeIter) = it.p
-Base.done(it::XMLNodeIter, p::Xptr) = (p == C_NULL)
-Base.next(it::XMLNodeIter, p::Xptr) = (nd = XMLNode(p); (nd, nd._struct.next))
-iteratorsize(::Type{XMLNodeIter}) = SizeUnknown()
+start(it::XMLNodeIter) = it.p
+done(it::XMLNodeIter, p::Xptr) = (p == C_NULL)
+next(it::XMLNodeIter, p::Xptr) = (nd = XMLNode(p); (nd, nd._struct.next))
+IteratorSize(::Type{XMLNodeIter}) = SizeUnknown()
 
 child_nodes(nd::XMLNode) = XMLNodeIter(nd._struct.children)
 
@@ -176,7 +176,7 @@ end
 
 const DEFAULT_DUMPBUFFER_SIZE = 4096
 
-function Base.string(nd::XMLNode)
+function string(nd::XMLNode)
     buf = XBuffer(DEFAULT_DUMPBUFFER_SIZE)
     ccall((:xmlNodeDump,libxml2), Cint, (Xptr, Xptr, Xptr, Cint, Cint),
         buf.ptr, nd._struct.doc, nd.ptr, 0, 1)
@@ -185,7 +185,7 @@ function Base.string(nd::XMLNode)
     return r
 end
 
-Base.show(io::IO, nd::XMLNode) = print(io, string(nd))
+show(io::IO, nd::XMLNode) = print(io, string(nd))
 
 
 #######################################
@@ -194,7 +194,7 @@ Base.show(io::IO, nd::XMLNode) = print(io, string(nd))
 #
 #######################################
 
-type XMLElement <: AbstractXMLNode
+mutable struct XMLElement <: AbstractXMLNode
     node::XMLNode
 
     function XMLElement(node::XMLNode)
@@ -213,8 +213,8 @@ has_children(x::XMLElement) = has_children(x.node)
 child_nodes(x::XMLElement) = child_nodes(x.node)
 content(x::XMLElement) = content(x.node)
 
-Base.string(x::XMLElement) = string(x.node)
-Base.show(io::IO, x::XMLElement) = show(io, x.node)
+string(x::XMLElement) = string(x.node)
+show(io::IO, x::XMLElement) = show(io, x.node)
 
 free(x::XMLElement) = free(x.node)
 unlink(x::XMLElement) = unlink(x.node)
@@ -257,14 +257,17 @@ end
 
 # element access
 
-immutable XMLElementIter
+struct XMLElementIter
     parent_ptr::Xptr
 end
 
-Base.start(it::XMLElementIter) = ccall((:xmlFirstElementChild,libxml2), Xptr, (Xptr,), it.parent_ptr)
-Base.done(it::XMLElementIter, p::Xptr) = (p == C_NULL)
-Base.next(it::XMLElementIter, p::Xptr) = (XMLElement(p), ccall((:xmlNextElementSibling,libxml2), Xptr, (Xptr,), p))
-iteratorsize(::Type{XMLElementIter}) = SizeUnknown()
+start(it::XMLElementIter) =
+    ccall((:xmlFirstElementChild,libxml2), Xptr, (Xptr,), it.parent_ptr)
+done(it::XMLElementIter, p::Xptr) =
+    (p == C_NULL)
+next(it::XMLElementIter, p::Xptr) =
+    (XMLElement(p), ccall((:xmlNextElementSibling,libxml2), Xptr, (Xptr,), p))
+IteratorSize(::Type{XMLElementIter}) = SizeUnknown()
 
 child_elements(x::XMLElement) = XMLElementIter(x.node.ptr)
 
@@ -280,7 +283,7 @@ function find_element(x::XMLElement, n::AbstractString)
 end
 
 function get_elements_by_tagname(x::XMLElement, n::AbstractString)
-    lst = Array{XMLElement,1}()
+    lst = Vector{XMLElement}()
     for c in child_elements(x)
         if name(c) == n
             push!(lst, c)
@@ -288,7 +291,7 @@ function get_elements_by_tagname(x::XMLElement, n::AbstractString)
     end
     return lst
 end
-Base.getindex(x::XMLElement, name::AbstractString) = get_elements_by_tagname(x, name)
+getindex(x::XMLElement, name::AbstractString) = get_elements_by_tagname(x, name)
 
 #######################################
 #
@@ -328,19 +331,15 @@ end
 
 set_attribute(x::XMLElement, name::AbstractString, val) = set_attribute(x, name, string(val))
 
-if VERSION < v"0.4.0-dev+980"
-    const PairTypes = NTuple{2}
-else
-    const PairTypes = @compat Union{NTuple{2}, Pair}
-end
+const PairTypes = Union{NTuple{2}, Pair}
 
-function set_attributes{P<:PairTypes}(x::XMLElement, attrs::AbstractArray{P})
+function set_attributes(x::XMLElement, attrs::AbstractArray{<:PairTypes})
     for (nam, val) in attrs
         set_attribute(x, string(nam), string(val))
     end
 end
 
-set_attributes(x::XMLElement, attrs::Associative) = set_attributes(x, collect(attrs))
+set_attributes(x::XMLElement, attrs::AbstractDict) = set_attributes(x, collect(attrs))
 
 function set_attributes(x::XMLElement; attrs...)
     for (nam, val) in attrs

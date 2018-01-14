@@ -2,21 +2,28 @@ __precompile__()
 
 module LightXML
 
-using Compat; import Compat.String
+uninit(T, len) = @static VERSION < v"0.7.0-DEV" ? T(len) : T(uninitialized, len)
 
-# iteratorsize is new in 0.5, declare it here for older versions. However,
-# we do not actually support calling these, since the traits are not defined
-if VERSION < v"0.5.0-dev+3305"
-    function iteratorsize(v)
-        error("Do not call this on older versions")
-    end
+create_vector(T, len) = uninit(Vector{T}, len)
+
+# We do not actually support calling these, since the traits are not defined
+import Base: SizeUnknown, IsInfinite, HasLength
+
+import Base: start, done, next, show, getindex, show, string
+
+@static if VERSION < v"0.7.0-DEV"
+    import Base: iteratorsize
+    const AbstractDict = Associative
+    const IteratorSize = iteratorsize
+    const Cvoid = Void
 else
-    import Base: iteratorsize, SizeUnknown, IsInfinite, HasLength
+    const is_windows = Sys.iswindows
 end
 
-
-if is_windows()
-    const libxml2 = Pkg.dir("WinRPM","deps","usr","$(Sys.ARCH)-w64-mingw32","sys-root","mingw","bin","libxml2-2")
+@static if is_windows()
+    const libxml2 =
+        Pkg.dir("WinRPM", "deps", "usr", "$(Sys.ARCH)-w64-mingw32", "sys-root", "mingw",
+                "bin", "libxml2-2")
 else
     const libxml2 = "libxml2"
 end
@@ -45,7 +52,7 @@ const Xchar = UInt8
 const Xstr = Ptr{Xchar}
 
 # opaque pointer type (do not dereference!) corresponding to xmlBufferPtr in C
-immutable xmlBuffer end
+struct xmlBuffer end
 const Xptr = Ptr{xmlBuffer}
 
 # pre-condition: p is not null
