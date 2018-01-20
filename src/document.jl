@@ -115,8 +115,8 @@ function save_file(xdoc::XMLDocument, filename::AbstractString; encoding::Abstra
 end
 
 function string(xdoc::XMLDocument; encoding::AbstractString="utf-8")
-    buf_out = create_vector(Xstr, 1)
-    len_out = create_vector(Cint, 1)
+    buf_out = @compat Vector{Xstr}(uninitialized, 1)
+    len_out = @compat Vector{Cint}(uninitialized, 1)
     ccall((:xmlDocDumpFormatMemoryEnc,libxml2), Cvoid,
           (Xptr, Ptr{Xstr}, Ptr{Cint}, Cstring, Cint),
           xdoc.ptr, buf_out, len_out, encoding, 1)

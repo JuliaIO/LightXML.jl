@@ -2,31 +2,18 @@ __precompile__()
 
 module LightXML
 
-uninit(T, len) = @static VERSION < v"0.7.0-DEV" ? T(len) : T(uninitialized, len)
-
-create_vector(T, len) = uninit(Vector{T}, len)
+using Compat
 
 # We do not actually support calling these, since the traits are not defined
 import Base: SizeUnknown, IsInfinite, HasLength
 
-import Base: start, done, next, show, getindex, show, string
+import Base: start, done, next, show, getindex, show, string, length
 
-@static if VERSION < v"0.7.0-DEV"
-    import Base: iteratorsize
-    const AbstractDict = Associative
-    const IteratorSize = iteratorsize
-    const Cvoid = Void
-else
-    const is_windows = Sys.iswindows
-end
-
-@static if is_windows()
-    const libxml2 =
-        Pkg.dir("WinRPM", "deps", "usr", "$(Sys.ARCH)-w64-mingw32", "sys-root", "mingw",
-                "bin", "libxml2-2")
-else
-    const libxml2 = "libxml2"
-end
+const libxml2 =
+    (Sys.iswindows()
+     ? Pkg.dir("WinRPM", "deps", "usr", "$(Sys.ARCH)-w64-mingw32", "sys-root", "mingw",
+               "bin", "libxml2-2")
+     : "libxml2")
 
 export
 

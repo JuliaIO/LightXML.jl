@@ -42,9 +42,9 @@ const XML_DOCB_DOCUMENT_NODE = 21
 ##### Generic methods
 
 is_elementnode(nd::AbstractXMLNode) = (nodetype(nd) == XML_ELEMENT_NODE)
-is_textnode(nd::AbstractXMLNode) = (nodetype(nd) == XML_TEXT_NODE)
+is_textnode(nd::AbstractXMLNode)    = (nodetype(nd) == XML_TEXT_NODE)
 is_commentnode(nd::AbstractXMLNode) = (nodetype(nd) == XML_COMMENT_NODE)
-is_cdatanode(nd::AbstractXMLNode) = (nodetype(nd) == XML_CDATA_SECTION_NODE)
+is_cdatanode(nd::AbstractXMLNode)   = (nodetype(nd) == XML_CDATA_SECTION_NODE)
 
 
 #######################################
@@ -234,10 +234,8 @@ function attribute(x::XMLElement, name::AbstractString; required::Bool=false)
     end
 end
 
-function has_attribute(x::XMLElement, name::AbstractString)
-    p = ccall((:xmlHasProp,libxml2), Xptr, (Xptr, Cstring), x.node.ptr, name)
-    return p != C_NULL
-end
+has_attribute(x::XMLElement, name::AbstractString) =
+    ccall((:xmlHasProp,libxml2), Xptr, (Xptr, Cstring), x.node.ptr, name) != C_NULL
 
 has_attributes(x::XMLElement) = (x.node._struct.attrs != C_NULL)
 attributes(x::XMLElement) = XMLAttrIter(x.node._struct.attrs)
@@ -261,10 +259,8 @@ struct XMLElementIter
     parent_ptr::Xptr
 end
 
-start(it::XMLElementIter) =
-    ccall((:xmlFirstElementChild,libxml2), Xptr, (Xptr,), it.parent_ptr)
-done(it::XMLElementIter, p::Xptr) =
-    (p == C_NULL)
+start(it::XMLElementIter) = ccall((:xmlFirstElementChild,libxml2), Xptr, (Xptr,), it.parent_ptr)
+done(it::XMLElementIter, p::Xptr) = (p == C_NULL)
 next(it::XMLElementIter, p::Xptr) =
     (XMLElement(p), ccall((:xmlNextElementSibling,libxml2), Xptr, (Xptr,), p))
 IteratorSize(::Type{XMLElementIter}) = SizeUnknown()
@@ -275,9 +271,7 @@ child_elements(x::XMLElement) = XMLElementIter(x.node.ptr)
 
 function find_element(x::XMLElement, n::AbstractString)
     for c in child_elements(x)
-        if name(c) == n
-            return c
-        end
+        name(c) == n && return c
     end
     return nothing
 end
@@ -285,9 +279,7 @@ end
 function get_elements_by_tagname(x::XMLElement, n::AbstractString)
     lst = Vector{XMLElement}()
     for c in child_elements(x)
-        if name(c) == n
-            push!(lst, c)
-        end
+        name(c) == n && push!(lst, c)
     end
     return lst
 end
