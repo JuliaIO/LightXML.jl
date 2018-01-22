@@ -95,10 +95,10 @@ struct XMLAttrIter
     p::Xptr
 end
 
-start(it::XMLAttrIter) = it.p
-done(it::XMLAttrIter, p::Xptr) = (p == C_NULL)
-next(it::XMLAttrIter, p::Xptr) = (a = XMLAttr(p); (a, a._struct.next))
-Compat.IteratorSize(::Type{XMLAttrIter}) = SizeUnknown()
+Base.start(it::XMLAttrIter) = it.p
+Base.done(it::XMLAttrIter, p::Xptr) = (p == C_NULL)
+Base.next(it::XMLAttrIter, p::Xptr) = (a = XMLAttr(p); (a, a._struct.next))
+Compat.IteratorSize(::Type{XMLAttrIter}) = Base.SizeUnknown()
 
 #######################################
 #
@@ -160,10 +160,10 @@ struct XMLNodeIter
     p::Xptr
 end
 
-start(it::XMLNodeIter) = it.p
-done(it::XMLNodeIter, p::Xptr) = (p == C_NULL)
-next(it::XMLNodeIter, p::Xptr) = (nd = XMLNode(p); (nd, nd._struct.next))
-Compat.IteratorSize(::Type{XMLNodeIter}) = SizeUnknown()
+Base.start(it::XMLNodeIter) = it.p
+Base.done(it::XMLNodeIter, p::Xptr) = (p == C_NULL)
+Base.next(it::XMLNodeIter, p::Xptr) = (nd = XMLNode(p); (nd, nd._struct.next))
+Compat.IteratorSize(::Type{XMLNodeIter}) = Base.SizeUnknown()
 
 child_nodes(nd::XMLNode) = XMLNodeIter(nd._struct.children)
 
@@ -176,7 +176,7 @@ end
 
 const DEFAULT_DUMPBUFFER_SIZE = 4096
 
-function string(nd::XMLNode)
+function Base.string(nd::XMLNode)
     buf = XBuffer(DEFAULT_DUMPBUFFER_SIZE)
     ccall((:xmlNodeDump,libxml2), Cint, (Xptr, Xptr, Xptr, Cint, Cint),
         buf.ptr, nd._struct.doc, nd.ptr, 0, 1)
@@ -185,7 +185,7 @@ function string(nd::XMLNode)
     return r
 end
 
-show(io::IO, nd::XMLNode) = print(io, string(nd))
+Base.show(io::IO, nd::XMLNode) = print(io, string(nd))
 
 
 #######################################
@@ -213,8 +213,8 @@ has_children(x::XMLElement) = has_children(x.node)
 child_nodes(x::XMLElement) = child_nodes(x.node)
 content(x::XMLElement) = content(x.node)
 
-string(x::XMLElement) = string(x.node)
-show(io::IO, x::XMLElement) = show(io, x.node)
+Base.string(x::XMLElement) = string(x.node)
+Base.show(io::IO, x::XMLElement) = show(io, x.node)
 
 free(x::XMLElement) = free(x.node)
 unlink(x::XMLElement) = unlink(x.node)
@@ -259,11 +259,12 @@ struct XMLElementIter
     parent_ptr::Xptr
 end
 
-start(it::XMLElementIter) = ccall((:xmlFirstElementChild,libxml2), Xptr, (Xptr,), it.parent_ptr)
-done(it::XMLElementIter, p::Xptr) = (p == C_NULL)
-next(it::XMLElementIter, p::Xptr) =
+Base.start(it::XMLElementIter) =
+    ccall((:xmlFirstElementChild,libxml2), Xptr, (Xptr,), it.parent_ptr)
+Base.done(it::XMLElementIter, p::Xptr) = (p == C_NULL)
+Base.next(it::XMLElementIter, p::Xptr) =
     (XMLElement(p), ccall((:xmlNextElementSibling,libxml2), Xptr, (Xptr,), p))
-Compat.IteratorSize(::Type{XMLElementIter}) = SizeUnknown()
+Compat.IteratorSize(::Type{XMLElementIter}) = Base.SizeUnknown()
 
 child_elements(x::XMLElement) = XMLElementIter(x.node.ptr)
 
@@ -283,7 +284,7 @@ function get_elements_by_tagname(x::XMLElement, n::AbstractString)
     end
     return lst
 end
-getindex(x::XMLElement, name::AbstractString) = get_elements_by_tagname(x, name)
+Base.getindex(x::XMLElement, name::AbstractString) = get_elements_by_tagname(x, name)
 
 #######################################
 #

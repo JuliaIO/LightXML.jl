@@ -84,24 +84,20 @@ end
 
 #### parse and free
 
-function parse_file(filename::AbstractString)
-    p = ccall((:xmlParseFile,libxml2), Xptr, (Cstring,), filename)
+function _check_result(p)
     p != C_NULL || throw(XMLParseError("Failure in parsing an XML file."))
     XMLDocument(p)
 end
 
-function parse_file(filename::AbstractString, encoding, options::Integer)
-    p = ccall((:xmlReadFile,libxml2), Xptr, (Cstring, Ptr{Cchar}, Cint),
-        filename, encoding, options)
-    p != C_NULL || throw(XMLParseError("Failure in parsing an XML file."))
-    XMLDocument(p)
-end
+parse_file(filename::AbstractString) =
+    _check_result(ccall((:xmlParseFile,libxml2), Xptr, (Cstring,), filename))
 
-function parse_string(s::AbstractString)
-    p = ccall((:xmlParseMemory,libxml2), Xptr, (Xstr, Cint), s, sizeof(s) + 1)
-    p != C_NULL || throw(XMLParseError("Failure in parsing an XML string."))
-    XMLDocument(p)
-end
+parse_file(filename::AbstractString, encoding, options::Integer) =
+    _check_result(ccall((:xmlReadFile,libxml2), Xptr, (Cstring, Ptr{Cchar}, Cint),
+        filename, encoding, options))
+
+parse_string(s::AbstractString) =
+    _check_result(ccall((:xmlParseMemory,libxml2), Xptr, (Xstr, Cint), s, sizeof(s) + 1))
 
 
 #### output
@@ -114,7 +110,7 @@ function save_file(xdoc::XMLDocument, filename::AbstractString; encoding::Abstra
     Int(ret)  # number of bytes written
 end
 
-function string(xdoc::XMLDocument; encoding::AbstractString="utf-8")
+function Base.string(xdoc::XMLDocument; encoding::AbstractString="utf-8")
     buf_out = @compat Vector{Xstr}(uninitialized, 1)
     len_out = @compat Vector{Cint}(uninitialized, 1)
     ccall((:xmlDocDumpFormatMemoryEnc,libxml2), Cvoid,
@@ -123,4 +119,4 @@ function string(xdoc::XMLDocument; encoding::AbstractString="utf-8")
     _xcopystr(buf_out[1])
 end
 
-show(io::IO, xdoc::XMLDocument) = print(io, string(xdoc))
+Base.show(io::IO, xdoc::XMLDocument) = print(io, string(xdoc))
