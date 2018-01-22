@@ -1,6 +1,6 @@
 using LightXML
 using Compat
-@static VERSION < v"0.7.0-DEV" ? (using Base.Test) : (using Test)
+using Compat.Test
 
 tests = ["parse", "create", "cdata"]
 

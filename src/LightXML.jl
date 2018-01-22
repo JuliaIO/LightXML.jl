@@ -4,18 +4,12 @@ module LightXML
 
 using Compat
 
-@static if VERSION < v"0.7.0-DEV"
-    const IteratorSize = Base.iteratorsize
-else
-    import Base: IteratorSize
-end
-
 # We do not actually support calling these, since the traits are not defined
 import Base: SizeUnknown, IsInfinite, HasLength
 import Base: start, done, next, show, getindex, show, string, length
 
 const libxml2 =
-    ((VERSION < v"0.7.0-DEV" ? is_windows() : Sys.iswindows())
+    (Compat.Sys.iswindows()
      ? Pkg.dir("WinRPM", "deps", "usr", "$(Sys.ARCH)-w64-mingw32", "sys-root", "mingw",
                "bin", "libxml2-2")
      : "libxml2")
