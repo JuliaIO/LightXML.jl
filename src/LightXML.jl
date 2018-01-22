@@ -4,15 +4,15 @@ module LightXML
 
 using Compat
 
-# We do not actually support calling these, since the traits are not defined
-import Base: SizeUnknown, IsInfinite, HasLength
-import Base: start, done, next, show, getindex, show, string, length
+import Base: SizeUnknown, start, done, next, show, getindex, show, string, length
 
 const libxml2 =
-    (Compat.Sys.iswindows()
-     ? Pkg.dir("WinRPM", "deps", "usr", "$(Sys.ARCH)-w64-mingw32", "sys-root", "mingw",
-               "bin", "libxml2-2")
-     : "libxml2")
+    if Compat.Sys.iswindows()
+        Pkg.dir("WinRPM", "deps", "usr", "$(Sys.ARCH)-w64-mingw32", "sys-root", "mingw",
+                "bin", "libxml2-2")
+    else
+        "libxml2"
+    end
 
 export
 
