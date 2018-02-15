@@ -2,7 +2,7 @@
 
 ##### Buffer
 
-immutable XBuffer
+struct XBuffer
     ptr::Xptr
 
     function XBuffer(bytes::Integer)
@@ -12,7 +12,7 @@ immutable XBuffer
     end
 end
 
-free(buf::XBuffer) = ccall((:xmlBufferFree,libxml2), Void, (Xptr,), buf.ptr)
+free(buf::XBuffer) = ccall((:xmlBufferFree,libxml2), Cvoid, (Xptr,), buf.ptr)
 
 Base.length(buf::XBuffer) = int(ccall((:xmlBufferLength,libxml2), Cint, (Xptr,), buf.ptr))
 

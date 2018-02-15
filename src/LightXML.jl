@@ -2,24 +2,15 @@ __precompile__()
 
 module LightXML
 
-using Compat; import Compat.String
+using Compat
 
-# iteratorsize is new in 0.5, declare it here for older versions. However,
-# we do not actually support calling these, since the traits are not defined
-if VERSION < v"0.5.0-dev+3305"
-    function iteratorsize(v)
-        error("Do not call this on older versions")
+const libxml2 =
+    if Compat.Sys.iswindows()
+        Pkg.dir("WinRPM", "deps", "usr", "$(Sys.ARCH)-w64-mingw32", "sys-root", "mingw",
+                "bin", "libxml2-2")
+    else
+        "libxml2"
     end
-else
-    import Base: iteratorsize, SizeUnknown, IsInfinite, HasLength
-end
-
-
-if is_windows()
-    const libxml2 = Pkg.dir("WinRPM","deps","usr","$(Sys.ARCH)-w64-mingw32","sys-root","mingw","bin","libxml2-2")
-else
-    const libxml2 = "libxml2"
-end
 
 export
 
@@ -45,7 +36,7 @@ const Xchar = UInt8
 const Xstr = Ptr{Xchar}
 
 # opaque pointer type (do not dereference!) corresponding to xmlBufferPtr in C
-immutable xmlBuffer end
+struct xmlBuffer end
 const Xptr = Ptr{xmlBuffer}
 
 # pre-condition: p is not null

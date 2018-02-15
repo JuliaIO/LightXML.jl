@@ -1,5 +1,3 @@
-using LightXML, Compat
-
 xdoc = XMLDocument()
 
 xroot = create_root(xdoc, "States")
@@ -10,15 +8,15 @@ set_attribute(xs1, "tag", "MA")
 
 xs2 = new_child(xroot, "State")
 add_text(xs2, "Illinois")
-set_attributes(xs2, @compat Dict{Any,Any}("tag"=>"IL", "cap"=>"Springfield"))
+set_attributes(xs2, Dict{Any,Any}("tag"=>"IL", "cap"=>"Springfield"))
 
 xs3 = new_child(xroot, "State")
 add_text(xs3, "California typo")
 
 set_content(xs3, "California typo again")
-@assert content(xs3) == "California typo again"
+@test content(xs3) == "California typo again"
 set_content(xs3, "California")
-@assert content(xs3) == "California"
+@test content(xs3) == "California"
 
 set_attributes(xs3; tag="CA", cap="Sacramento")
 
@@ -40,6 +38,6 @@ rtxt2 = """
 </States>
 """
 
-@assert (strip(string(xdoc)) == strip(rtxt1)) || (strip(string(xdoc)) == strip(rtxt2))
+@test (strip(string(xdoc)) == strip(rtxt1)) || (strip(string(xdoc)) == strip(rtxt2))
 
 free(xdoc)

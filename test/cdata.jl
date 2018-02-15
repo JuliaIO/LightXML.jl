@@ -1,5 +1,3 @@
-using LightXML
-
 xdoc = XMLDocument()
 
 xroot = create_root(xdoc, "States")
@@ -14,6 +12,6 @@ rtxt = """
 </States>
 """
 
-@assert strip(string(xdoc)) == strip(rtxt)
+@test strip(string(xdoc)) == strip(rtxt)
 
 free(xdoc)

@@ -1,6 +1,3 @@
-using LightXML
-using Base.Test
-
 # document
 
 docstr = """
