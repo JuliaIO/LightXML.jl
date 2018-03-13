@@ -11,5 +11,5 @@
     <author>J K. Rowling</author>
     <year>2005</year>
     <price>29.99</price>
-  </book>
+  </book><?PI description?>
 </bookstore>
