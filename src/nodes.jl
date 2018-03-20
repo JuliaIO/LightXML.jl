@@ -45,7 +45,7 @@ is_elementnode(nd::AbstractXMLNode) = (nodetype(nd) == XML_ELEMENT_NODE)
 is_textnode(nd::AbstractXMLNode)    = (nodetype(nd) == XML_TEXT_NODE)
 is_commentnode(nd::AbstractXMLNode) = (nodetype(nd) == XML_COMMENT_NODE)
 is_cdatanode(nd::AbstractXMLNode)   = (nodetype(nd) == XML_CDATA_SECTION_NODE)
-
+is_pinode(nd::AbstractXMLNode)      = (nodetype(nd) == XML_PI_NODE)
 
 #######################################
 #
@@ -315,7 +315,13 @@ function new_textnode(txt::AbstractString)
     XMLNode(p)
 end
 
+function new_pinode(name::AbstractString, content::AbstractString)
+    p = ccall((:xmlNewPI,libxml2), Xptr, (Cstring, Cstring), name, content)
+    XMLNode(p)
+end
+
 add_text(x::XMLElement, txt::AbstractString) = add_child(x, new_textnode(txt))
+add_pi(x::XMLElement, name::AbstractString, content::AbstractString) = add_child(x, new_pinode(name, content))
 
 function set_attribute(x::XMLElement, name::AbstractString, val::AbstractString)
     a = ccall((:xmlSetProp,libxml2), Xptr, (Xptr, Cstring, Cstring), x.node.ptr, name, val)

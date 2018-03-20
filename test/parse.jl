@@ -14,7 +14,7 @@ docstr = """
     <author>J K. Rowling</author>
     <year>2005</year>
     <price>29.99</price>
-  </book>
+  </book><?PI description?>
 </bookstore>
 """
 
@@ -46,15 +46,16 @@ ras = collect(attributes(xroot))
 # children of root (text nodes and books)
 
 rcs = collect(child_nodes(xroot))
-@test length(rcs) == 5  # text, book[1], text, book[1], text
+@test length(rcs) == 6  # text, book[1], text, book[1], PI, text
 
 @test is_textnode(rcs[1])
 @test is_textnode(rcs[3])
-@test is_textnode(rcs[5])
+@test is_pinode(rcs[5])
+@test is_textnode(rcs[6])
 
 @test is_blanknode(rcs[1])
 @test is_blanknode(rcs[3])
-@test is_blanknode(rcs[5])
+@test is_blanknode(rcs[6])
 
 @test is_elementnode(rcs[2])
 @test is_elementnode(rcs[4])
