@@ -71,6 +71,15 @@ for c in child_nodes(xroot)  # c is an instance of XMLNode
         println(name(e))
     end
 end
+
+#=
+If the remainder of the script does not use the document or any of its children,
+you can call free here to deallocate the memory. The memory will only get
+deallocated by calling free or by exiting julia -- i.e., the memory allocated by
+libxml2 will not get freed when the julia variable wrapping it goes out of
+scope.
+=#
+free(xdoc)
 ```
 
 There are actually five child nodes under ``<bookstore>``: the 1st, 3rd, 5th children are text nodes (any space between node elements are captured by text nodes), while the 2nd and 4th nodes are element nodes corresponding to the ``<book>`` elements.
