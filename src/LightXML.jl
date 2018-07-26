@@ -4,16 +4,16 @@ module LightXML
 
 using Compat
 
-const libxml2 =
-    if Compat.Sys.iswindows()
-        Pkg.dir("WinRPM", "deps", "usr", "$(Sys.ARCH)-w64-mingw32", "sys-root", "mingw",
-                "bin", "libxml2-2")
-    else
-        "libxml2"
+let depsfile = joinpath(@__DIR__, "..", "deps", "deps.jl")
+    if !isfile(depsfile)
+        error("LightXML is not properly installed. Run `Pkg.build(\"LightXML\")` and " *
+              "restart Julia.")
     end
+    include(depsfile)
+end
+check_deps()
 
 export
-
     # common
     name, free,
 
