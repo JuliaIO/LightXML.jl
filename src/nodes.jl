@@ -95,9 +95,17 @@ struct XMLAttrIter
     p::Xptr
 end
 
-Base.start(it::XMLAttrIter) = it.p
-Base.done(it::XMLAttrIter, p::Xptr) = (p == C_NULL)
-Base.next(it::XMLAttrIter, p::Xptr) = (a = XMLAttr(p); (a, a._struct.next))
+if isdefined(Base, :iterate)
+    function Base.iterate(it::XMLAttrIter, p::Xptr=it.p)
+        p == C_NULL && return nothing
+        a = XMLAttr(p)
+        (a, a._struct.next)
+    end
+else
+    Base.start(it::XMLAttrIter) = it.p
+    Base.done(it::XMLAttrIter, p::Xptr) = (p == C_NULL)
+    Base.next(it::XMLAttrIter, p::Xptr) = (a = XMLAttr(p); (a, a._struct.next))
+end
 Compat.IteratorSize(::Type{XMLAttrIter}) = Base.SizeUnknown()
 
 #######################################
