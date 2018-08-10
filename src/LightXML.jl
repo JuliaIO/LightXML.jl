@@ -1,8 +1,6 @@
 
 module LightXML
 
-using Compat
-
 let depsfile = joinpath(@__DIR__, "..", "deps", "deps.jl")
     if !isfile(depsfile)
         error("LightXML is not properly installed. Run `Pkg.build(\"LightXML\")` and " *

@@ -95,17 +95,12 @@ struct XMLAttrIter
     p::Xptr
 end
 
-@static if isdefined(Base, :iterate)
-    function Base.iterate(it::XMLAttrIter, p::Xptr=it.p)
-        p == C_NULL && return nothing
-        a = XMLAttr(p)
-        (a, a._struct.next)
-    end
-else
-    Base.start(it::XMLAttrIter) = it.p
-    Base.done(it::XMLAttrIter, p::Xptr) = (p == C_NULL)
-    Base.next(it::XMLAttrIter, p::Xptr) = (a = XMLAttr(p); (a, a._struct.next))
+function Base.iterate(it::XMLAttrIter, p::Xptr=it.p)
+    p == C_NULL && return nothing
+    a = XMLAttr(p)
+    (a, a._struct.next)
 end
+
 IteratorSize(::Type{XMLAttrIter}) = Base.SizeUnknown()
 
 #######################################
@@ -168,16 +163,10 @@ struct XMLNodeIter
     p::Xptr
 end
 
-@static if isdefined(Base, :iterate)
-    function Base.iterate(it::XMLNodeIter, p::Xptr=it.p)
-        p == C_NULL && return nothing
-        nd = XMLNode(p)
-        (nd, nd._struct.next)
-    end
-else
-    Base.start(it::XMLNodeIter) = it.p
-    Base.done(it::XMLNodeIter, p::Xptr) = (p == C_NULL)
-    Base.next(it::XMLNodeIter, p::Xptr) = (nd = XMLNode(p); (nd, nd._struct.next))
+function Base.iterate(it::XMLNodeIter, p::Xptr=it.p)
+    p == C_NULL && return nothing
+    nd = XMLNode(p)
+    (nd, nd._struct.next)
 end
 
 IteratorSize(::Type{XMLNodeIter}) = Base.SizeUnknown()
@@ -276,18 +265,9 @@ struct XMLElementIter
     parent_ptr::Xptr
 end
 
-@static if isdefined(Base, :iterate)
-    function Base.iterate(it::XMLElementIter,
-            p::Xptr=ccall((:xmlFirstElementChild,libxml2), Xptr, (Xptr,), it.parent_ptr))
-        p == C_NULL && return nothing
-        XMLElement(p), ccall((:xmlNextElementSibling,libxml2), Xptr, (Xptr,), p)
-    end
-else
-    Base.start(it::XMLElementIter) =
-        ccall((:xmlFirstElementChild,libxml2), Xptr, (Xptr,), it.parent_ptr)
-    Base.done(it::XMLElementIter, p::Xptr) = (p == C_NULL)
-    Base.next(it::XMLElementIter, p::Xptr) =
-        (XMLElement(p), ccall((:xmlNextElementSibling,libxml2), Xptr, (Xptr,), p))
+function Base.iterate(it::XMLElementIter, p::Xptr=ccall((:xmlFirstElementChild, libxml2), Xptr, (Xptr,), it.parent_ptr))
+    p == C_NULL && return nothing
+    XMLElement(p), ccall((:xmlNextElementSibling, libxml2), Xptr, (Xptr,), p)
 end
 
 IteratorSize(::Type{XMLElementIter}) = Base.SizeUnknown()

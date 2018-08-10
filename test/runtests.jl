@@ -1,5 +1,4 @@
 using LightXML
-using Compat
 using Test
 
 tests = ["parse", "create", "cdata", "pi"]
