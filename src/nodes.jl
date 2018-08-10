@@ -95,7 +95,7 @@ struct XMLAttrIter
     p::Xptr
 end
 
-if isdefined(Base, :iterate)
+@static if isdefined(Base, :iterate)
     function Base.iterate(it::XMLAttrIter, p::Xptr=it.p)
         p == C_NULL && return nothing
         a = XMLAttr(p)
@@ -168,9 +168,18 @@ struct XMLNodeIter
     p::Xptr
 end
 
-Base.start(it::XMLNodeIter) = it.p
-Base.done(it::XMLNodeIter, p::Xptr) = (p == C_NULL)
-Base.next(it::XMLNodeIter, p::Xptr) = (nd = XMLNode(p); (nd, nd._struct.next))
+@static if isdefined(Base, :iterate)
+    function Base.iterate(it::XMLNodeIter, p::Xptr=it.p)
+        p == C_NULL && return nothing
+        nd = XMLNode(p)
+        (nd, nd._struct.next)
+    end
+else
+    Base.start(it::XMLNodeIter) = it.p
+    Base.done(it::XMLNodeIter, p::Xptr) = (p == C_NULL)
+    Base.next(it::XMLNodeIter, p::Xptr) = (nd = XMLNode(p); (nd, nd._struct.next))
+end
+
 Compat.IteratorSize(::Type{XMLNodeIter}) = Base.SizeUnknown()
 
 child_nodes(nd::XMLNode) = XMLNodeIter(nd._struct.children)
@@ -267,11 +276,20 @@ struct XMLElementIter
     parent_ptr::Xptr
 end
 
-Base.start(it::XMLElementIter) =
-    ccall((:xmlFirstElementChild,libxml2), Xptr, (Xptr,), it.parent_ptr)
-Base.done(it::XMLElementIter, p::Xptr) = (p == C_NULL)
-Base.next(it::XMLElementIter, p::Xptr) =
-    (XMLElement(p), ccall((:xmlNextElementSibling,libxml2), Xptr, (Xptr,), p))
+@static if isdefined(Base, :iterate)
+    function Base.iterate(it::XMLElementIter,
+            p::Xptr=ccall((:xmlFirstElementChild,libxml2), Xptr, (Xptr,), it.parent_ptr))
+        p == C_NULL && return nothing
+        XMLElement(p), ccall((:xmlNextElementSibling,libxml2), Xptr, (Xptr,), p)
+    end
+else
+    Base.start(it::XMLElementIter) =
+        ccall((:xmlFirstElementChild,libxml2), Xptr, (Xptr,), it.parent_ptr)
+    Base.done(it::XMLElementIter, p::Xptr) = (p == C_NULL)
+    Base.next(it::XMLElementIter, p::Xptr) =
+        (XMLElement(p), ccall((:xmlNextElementSibling,libxml2), Xptr, (Xptr,), p))
+end
+
 Compat.IteratorSize(::Type{XMLElementIter}) = Base.SizeUnknown()
 
 child_elements(x::XMLElement) = XMLElementIter(x.node.ptr)
