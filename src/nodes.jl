@@ -259,11 +259,20 @@ struct XMLElementIter
     parent_ptr::Xptr
 end
 
-Base.start(it::XMLElementIter) =
-    ccall((:xmlFirstElementChild,libxml2), Xptr, (Xptr,), it.parent_ptr)
-Base.done(it::XMLElementIter, p::Xptr) = (p == C_NULL)
-Base.next(it::XMLElementIter, p::Xptr) =
-    (XMLElement(p), ccall((:xmlNextElementSibling,libxml2), Xptr, (Xptr,), p))
+if isdefined(Base, :iterate)
+    function Base.iterate(it::XMLElementIter,
+            state=(ccall((:xmlFirstElementChild,libxml2), Xptr, (Xptr,), it.parent_ptr), 0))
+        state[1] == C_NULL && return nothing
+        el = XMLElement(state[1])
+        (el, (ccall((:xmlNextElementSibling,libxml2), Xptr, (Xptr,), state[1]), 0))
+    end
+else
+    Base.start(it::XMLElementIter) =
+        ccall((:xmlFirstElementChild,libxml2), Xptr, (Xptr,), it.parent_ptr)
+        Base.done(it::XMLElementIter, p::Xptr) = (p == C_NULL)
+        Base.next(it::XMLElementIter, p::Xptr) =
+            (XMLElement(p), ccall((:xmlNextElementSibling,libxml2), Xptr, (Xptr,), p))
+end
 Compat.IteratorSize(::Type{XMLElementIter}) = Base.SizeUnknown()
 
 child_elements(x::XMLElement) = XMLElementIter(x.node.ptr)
