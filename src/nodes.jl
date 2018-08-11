@@ -95,10 +95,13 @@ struct XMLAttrIter
     p::Xptr
 end
 
-Base.start(it::XMLAttrIter) = it.p
-Base.done(it::XMLAttrIter, p::Xptr) = (p == C_NULL)
-Base.next(it::XMLAttrIter, p::Xptr) = (a = XMLAttr(p); (a, a._struct.next))
-Compat.IteratorSize(::Type{XMLAttrIter}) = Base.SizeUnknown()
+function Base.iterate(it::XMLAttrIter, p::Xptr=it.p)
+    p == C_NULL && return nothing
+    a = XMLAttr(p)
+    (a, a._struct.next)
+end
+
+Base.IteratorSize(::Type{XMLAttrIter}) = Base.SizeUnknown()
 
 #######################################
 #
@@ -160,10 +163,13 @@ struct XMLNodeIter
     p::Xptr
 end
 
-Base.start(it::XMLNodeIter) = it.p
-Base.done(it::XMLNodeIter, p::Xptr) = (p == C_NULL)
-Base.next(it::XMLNodeIter, p::Xptr) = (nd = XMLNode(p); (nd, nd._struct.next))
-Compat.IteratorSize(::Type{XMLNodeIter}) = Base.SizeUnknown()
+function Base.iterate(it::XMLNodeIter, p::Xptr=it.p)
+    p == C_NULL && return nothing
+    nd = XMLNode(p)
+    (nd, nd._struct.next)
+end
+
+Base.IteratorSize(::Type{XMLNodeIter}) = Base.SizeUnknown()
 
 child_nodes(nd::XMLNode) = XMLNodeIter(nd._struct.children)
 
@@ -259,12 +265,12 @@ struct XMLElementIter
     parent_ptr::Xptr
 end
 
-Base.start(it::XMLElementIter) =
-    ccall((:xmlFirstElementChild,libxml2), Xptr, (Xptr,), it.parent_ptr)
-Base.done(it::XMLElementIter, p::Xptr) = (p == C_NULL)
-Base.next(it::XMLElementIter, p::Xptr) =
-    (XMLElement(p), ccall((:xmlNextElementSibling,libxml2), Xptr, (Xptr,), p))
-Compat.IteratorSize(::Type{XMLElementIter}) = Base.SizeUnknown()
+function Base.iterate(it::XMLElementIter, p::Xptr=ccall((:xmlFirstElementChild, libxml2), Xptr, (Xptr,), it.parent_ptr))
+    p == C_NULL && return nothing
+    XMLElement(p), ccall((:xmlNextElementSibling, libxml2), Xptr, (Xptr,), p)
+end
+
+Base.IteratorSize(::Type{XMLElementIter}) = Base.SizeUnknown()
 
 child_elements(x::XMLElement) = XMLElementIter(x.node.ptr)
 

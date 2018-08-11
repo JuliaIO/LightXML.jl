@@ -1,6 +1,5 @@
 using LightXML
-using Compat
-using Compat.Test
+using Test
 
 tests = ["parse", "create", "cdata", "pi"]
 

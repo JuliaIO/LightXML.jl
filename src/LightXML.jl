@@ -1,8 +1,5 @@
-__precompile__()
 
 module LightXML
-
-using Compat
 
 let depsfile = joinpath(@__DIR__, "..", "deps", "deps.jl")
     if !isfile(depsfile)
