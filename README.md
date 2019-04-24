@@ -13,7 +13,7 @@ This package is a light-weight Julia wrapper of [libxml2](http://www.xmlsoft.org
 
 ### Setup
 
-Like other Julia packages, you may checkout *LightXML* from METADATA repo, as
+Like other Julia packages, you may checkout *LightXML* from the General registry, as
 
 ```julia
 Pkg.add("LightXML")
