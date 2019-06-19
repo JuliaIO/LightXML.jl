@@ -166,7 +166,7 @@ set_attribute(xs1, "tag", "MA")
 xs2 = new_child(xroot, "State")
 add_text(xs2, "Illinois")
 # set multiple attributes using a dict
-set_attributes(xs2, {"tag"=>"IL", "cap"=>"Springfield"})
+set_attributes(xs2, Dict("tag"=>"IL", "cap"=>"Springfield"))
 
 # now, the third child
 xs3 = new_child(xroot, "State")
