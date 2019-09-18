@@ -1,3 +1,10 @@
+## Julia
+*.jl.*.cov
 *.jl.cov
 *.jl.mem
+.DS_Store
 ex1
+Manifest.toml
+/dev/
+/deps/*
+!/deps/build.jl
