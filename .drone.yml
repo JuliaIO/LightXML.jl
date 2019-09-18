@@ -27,3 +27,5 @@ steps:
   commands:
       - uname -a
       - julia --project=. -e 'using Pkg; Pkg.build(); Pkg.test(coverage=true)'
+      
+---
