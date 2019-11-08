@@ -83,7 +83,7 @@ free(xdoc)
 
 There are actually five child nodes under ``<bookstore>``: the 1st, 3rd, 5th children are text nodes (any space between node elements are captured by text nodes), while the 2nd and 4th nodes are element nodes corresponding to the ``<book>`` elements.
 
-One may use the function ``nodetype`` to determine the type of a node, which returns an integer following the table [here](http://www.w3schools.com/dom/dom_nodetype.asp). In particular, 1 indicates element node and 3 indicates text node.
+One may use the function ``nodetype`` to determine the type of a node, which returns an integer following the table [here](https://www.w3schools.com/jsref/prop_node_nodetype.asp). In particular, 1 indicates element node and 3 indicates text node.
 
 If you only care about child elements, you may use ``child_elements`` instead of ``child_nodes``.
 
