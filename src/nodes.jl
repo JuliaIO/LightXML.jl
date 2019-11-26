@@ -283,6 +283,10 @@ function find_element(x::XMLElement, n::AbstractString)
     return nothing
 end
 
+function find_element(x, ns::Vector{<:AbstractString})
+    foldl(find_element, ns; init = x)
+end
+
 function get_elements_by_tagname(x::XMLElement, n::AbstractString)
     lst = Vector{XMLElement}()
     for c in child_elements(x)
