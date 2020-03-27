@@ -1,14 +1,6 @@
 
 module LightXML
-
-let depsfile = joinpath(@__DIR__, "..", "deps", "deps.jl")
-    if !isfile(depsfile)
-        error("LightXML is not properly installed. Run `Pkg.build(\"LightXML\")` and " *
-              "restart Julia.")
-    end
-    include(depsfile)
-end
-check_deps()
+using XML2_jll
 
 export
     # common
