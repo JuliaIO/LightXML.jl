@@ -19,7 +19,10 @@ export
 
     # document
     XMLDocument, version, encoding, compression, standalone, root,
-    parse_file, parse_string, save_file, set_root, create_root
+    parse_file, parse_string, save_file, set_root, create_root,
+
+    # schema
+    XMLSchema, validate
 
 const Xchar = UInt8
 const Xstr = Ptr{Xchar}
@@ -43,5 +46,6 @@ include("utils.jl")
 include("nodes.jl")
 include("document.jl")
 include("cdata.jl")
+include("schema.jl")
 
 end
