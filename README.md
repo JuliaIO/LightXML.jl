@@ -326,6 +326,7 @@ isvalid = validate(doc, schema)      # validate a LightXML XML Document against 
 isvalid = validate(url, schema)      # validate a URI or file against an XSD Schema document
 isvalid = validate(element, schema)  # validate a LightXML XML Node (a subtree) against an XSD Schema document
 
-isvalid = validate(xmlfile, schemafile)  # validate an XML file or URL against a XSD schem file or URL 
-'''
+isvalid = validate(xmlfile, schemafile)  # validate an XML file or URL against a XSD schem file or URL
+```
+
 
