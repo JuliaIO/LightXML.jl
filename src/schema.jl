@@ -25,23 +25,23 @@ function XMLSchema(doc::XMLDocument)
 end
 
 function validate(xml::XMLDocument, schema::XMLSchema)
-    ctxt = ccall((:xmlSchemaNewValidCtxt, libxml2), Xptr, (Xptr,), schema)
+    ctxt = ccall((:xmlSchemaNewValidCtxt, libxml2), Xptr, (Xptr,), schema.ptr)
     err = ccall((:xmlSchemaValidateDoc, libxml2), 
         Cint, (Xptr, Xptr), ctxt, xml.ptr)
     return err == 0 ? true : false
 end
 
 function validate(url::String, schema::XMLSchema)
-    ctxt = ccall((:xmlSchemaNewValidCtxt, libxml2), Xptr, (Xptr,), schema)
+    ctxt = ccall((:xmlSchemaNewValidCtxt, libxml2), Xptr, (Xptr,), schema.ptr)
     err = ccall((:xmlSchemaValidateFile, libxml2), 
         Cint, (Xptr, Cstring), ctxt, url)
     return err == 0 ? true : false
 end
 
-function validate(elem::XMLNode, schema::XMLSchema)
-    ctxt = ccall((:xmlSchemaNewValidCtxt, libxml2), Xptr, (Xptr,), schema)
+function validate(elem::XMLElement, schema::XMLSchema)
+    ctxt = ccall((:xmlSchemaNewValidCtxt, libxml2), Xptr, (Xptr,), schema.ptr)
     err = ccall((:xmlSchemaValidateOneElement, libxml2), 
-        Cint, (Xptr, Cstring), ctxt, elem.ptr)
+        Cint, (Xptr, Xptr), ctxt, elem.node.ptr)
     return err == 0 ? true : false
 end
 
