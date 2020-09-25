@@ -36,13 +36,12 @@ end
 """
 Validate an XMLDocument with an XMLSchema
 Returns true if valid
-    NB:  There might be a memory leak from the ctxt pointer here, but calling the libxml2 free context function 
-         to free ctxt causes a segfault in the library, so hopefully this is freed elsewhere by the C library
 """
 function validate(xml::XMLDocument, schema::XMLSchema)
     ctxt = ccall((:xmlSchemaNewValidCtxt, libxml2), Xptr, (Xptr,), schema.ptr)
     err = ccall((:xmlSchemaValidateDoc, libxml2), 
         Cint, (Xptr, Xptr), ctxt, xml.ptr)
+    Libc.free(ctxt)
     return err == 0 ? true : false
 end
 
@@ -54,6 +53,7 @@ function validate(url::String, schema::XMLSchema)
     ctxt = ccall((:xmlSchemaNewValidCtxt, libxml2), Xptr, (Xptr,), schema.ptr)
     err = ccall((:xmlSchemaValidateFile, libxml2), 
         Cint, (Xptr, Cstring), ctxt, url)
+    Libc.free(ctxt)
     return err == 0 ? true : false
 end
 
@@ -65,7 +65,8 @@ function validate(elem::XMLElement, schema::XMLSchema)
     ctxt = ccall((:xmlSchemaNewValidCtxt, libxml2), Xptr, (Xptr,), schema.ptr)
     err = ccall((:xmlSchemaValidateOneElement, libxml2), 
         Cint, (Xptr, Xptr), ctxt, elem.node.ptr)
-    return err == 0 ? true : false
+   Libc.free(ctxt)
+   return err == 0 ? true : false
 end
 
 """
@@ -81,5 +82,6 @@ function validate(url::String, schemafile::String)
     ctxt = ccall((:xmlSchemaNewValidCtxt, libxml2), Xptr, (Xptr,), schema)
     err = ccall((:xmlSchemaValidateFile, libxml2), 
         Cint, (Ptr{LightXML.xmlBuffer}, Cstring), ctxt, url)
+    Libc.free(ctxt)
     return err == 0 ? true : false
 end
