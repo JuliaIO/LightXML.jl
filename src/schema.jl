@@ -1,18 +1,14 @@
 """
-An XML Schema Document, produced by an XML document that is XML for the schema.
+An XML Schema Document, produced by an XML file or XMLDocument that is XML for the schema.
 """
 mutable struct XMLSchema
     ptr::Xptr
-    isvalid::Bool
-end
-
-"""
-Create an XMLSchema from a C library schema context pointer
-"""
-function XMLSchema(context::Xptr)
-    schema = ccall((:xmlSchemaParse, libxml2), Xptr, (Xptr,), context)
-    schema != C_NULL || throw(XMLValidationError("Bad XML Schema in Document"))
-    return XMLSchema(schema, true)
+    function XMLSchema(ctxt::Xptr)
+        schema = ccall((:xmlSchemaParse, libxml2), Xptr, (Xptr,), ctxt)
+        schema != C_NULL || throw(XMLValidationError("Bad XML Schema in Document"))
+        obj = new(schema)
+        finalizer((x) -> Libc.free(x.ptr), obj)
+    end
 end
 
 """
