@@ -1,13 +1,14 @@
-@test validate("valid.xml", "valid.xsd") == true
+@testset "XML Validation with XSD" begin
+  
+    @test validate("valid.xml", "valid.xsd")
 
-@test validate("valid.xml", "valid.xsd") == true
+    doc = parse_file("valid.xml")
+    schema = XMLSchema("valid.xsd")
 
-doc = parse_file("valid.xml")
-schema = XMLSchema("valid.xsd")
+    @test validate("valid.xml", schema)
 
-@test validate("valid.xml", schema) == true
+    @test validate(doc, schema)
 
-@test validate(doc, schema) == true
+    @test validate(root(doc), schema)
 
-@test validate(root(doc), schema) == true
-
+end
