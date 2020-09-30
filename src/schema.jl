@@ -6,6 +6,7 @@ mutable struct XMLSchema
     function XMLSchema(ctxt::Xptr)
         schema = ccall((:xmlSchemaParse, libxml2), Xptr, (Xptr,), ctxt)
         schema != C_NULL || throw(XMLValidationError("Bad XML Schema in Document"))
+        ccall((:xmlSchemaFreeParserCtxt, libxml2), Cvoid, (Xptr,), ctxt)
         obj = new(schema)
         finalizer((x) -> Libc.free(x.ptr), obj)
     end
