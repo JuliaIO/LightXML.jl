@@ -35,7 +35,6 @@ Use an existing XMLschema to validate
 """
 function _schema_valid_ctxt(f::Function, schema::XMLSchema)
     ctxt = ccall((:xmlSchemaNewValidCtxt, libxml2), Xptr, (Xptr,), schema.ptr)
-    local err
     err = try
         f(ctxt)
     finally
