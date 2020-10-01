@@ -1,3 +1,7 @@
+
+# test this one inside and outide the testset
+@test validate("valid.xml", "valid.xsd")
+
 @testset "XML Validation with XSD" begin
   
     @test validate("valid.xml", "valid.xsd")
