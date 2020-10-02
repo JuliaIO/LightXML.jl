@@ -84,14 +84,6 @@ Validate an XML file or url with an XSD file or url
 Returns true if valid
 """
 function validate(url::String, schemafile::String)
-    ctxt = ccall((:xmlSchemaNewParserCtxt, libxml2), Xptr, (Cstring,), schemafile)
-    ctxt != C_NULL || throw(XMLValidationError("Bad XML Schema at " * schemafile))
-    schema = ccall((:xmlSchemaParse, libxml2), Xptr, (Xptr,), ctxt)
-    ccall((:xmlSchemaFreeParserCtxt, libxml2), Cvoid, (Xptr,), ctxt)
-    schema != C_NULL || throw(XMLValidationError("Bad XML Schema at " * url))
-    ctxt = ccall((:xmlSchemaNewValidCtxt, libxml2), Xptr, (Xptr,), schema)
-    Libc.free(schema)
-    err = ccall((:xmlSchemaValidateFile, libxml2),
-        Cint, (Ptr{LightXML.xmlBuffer}, Cstring), ctxt, url)
-    return err == 0
+    schema = XMLSchema(schemafile)
+    return validate(url, schema)
 end
