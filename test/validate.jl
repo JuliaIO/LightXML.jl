@@ -1,8 +1,3 @@
-
-# test this one inside and outide the testset
-@test validate("valid.xml", "valid.xsd")
-@test validate("invalid.xml", "valid.xsd") == false
-
 @testset "XML Validation with XSD" begin
   
     @test validate("valid.xml", "valid.xsd")
