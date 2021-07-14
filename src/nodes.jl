@@ -283,6 +283,14 @@ function find_element(x::XMLElement, n::AbstractString)
     return nothing
 end
 
+function find_all_elements(x::XMLElement, n::AbstractString)
+	matched = []
+	for c in child_elements(x)
+		name(c) == n && push!(matched, c)
+	end
+	return matched
+end
+
 function get_elements_by_tagname(x::XMLElement, n::AbstractString)
     lst = Vector{XMLElement}()
     for c in child_elements(x)
