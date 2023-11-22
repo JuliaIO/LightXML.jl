@@ -97,7 +97,7 @@ parse_file(filename::AbstractString, encoding, options::Integer) =
         filename, encoding, options))
 
 parse_string(s::AbstractString) =
-    _check_result(ccall((:xmlParseMemory,libxml2), Xptr, (Xstr, Cint), s, sizeof(s) + 1))
+    _check_result(ccall((:xmlParseMemory,libxml2), Xptr, (Xstr, Cint), s, sizeof(s)))
 
 
 #### output
