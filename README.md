@@ -1,6 +1,6 @@
 ## LightXML.jl
 
-[![CI](https://github.com/nhz2/LightXML.jl/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/nhz2/LightXML.jl/actions/workflows/CI.yml)
+[![CI](https://github.com/JuliaIO/LightXML.jl/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/JuliaIO/LightXML.jl/actions/workflows/CI.yml)
 
 This package is a light-weight Julia wrapper of [libxml2](http://www.xmlsoft.org), which provides a minimal interface that covers functionalities that are commonly needed:
 
