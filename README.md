@@ -313,3 +313,17 @@ save_file(xdoc, filename)    # save xdoc to an XML file
 string(xdoc)                 # formatted XML doc to a string
 show(io, xdoc)               # output formatted XML document
 ```
+
+##### Functions to validate a document
+
+```julia
+xsd = XMLSchema(url)                 # parse an XSD schema file or URL
+
+isvalid = validate(xmlfile, schema)  # validate an XML file against a previously loaded XSD schema 
+isvalid = validate(doc, schema)      # validate a LightXML XML Document against a previously loaded XSD schema 
+isvalid = validate(url, schema)      # validate a URI or file against an XSD Schema document
+isvalid = validate(element, schema)  # validate a LightXML XML Node (a subtree) against an XSD Schema document
+isvalid = validate(xmlfile, schemafile)  # validate an XML file or URL against a XSD schem file or URL
+```
+
+

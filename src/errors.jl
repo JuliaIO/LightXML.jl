@@ -15,3 +15,7 @@ end
 struct XMLTreeError{T<:AbstractString} <: XMLError
     msg::T
 end
+
+struct XMLValidationError{T<:AbstractString} <: XMLError
+    msg::T
+end
