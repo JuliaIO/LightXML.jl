@@ -120,3 +120,13 @@ function Base.string(xdoc::XMLDocument; encoding::AbstractString="utf-8")
 end
 
 Base.show(io::IO, xdoc::XMLDocument) = print(io, string(xdoc))
+
+function find_element(xdoc::XMLDocument, n::AbstractString)
+    x = root(xdoc)
+    find_element(x, n)
+end
+
+function get_elements_by_tagname(xdoc::XMLDocument, n::AbstractString)
+    x = root(xdoc)
+    get_elements_by_tagname(x, n)
+end
