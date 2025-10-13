@@ -19,17 +19,21 @@ jobs:
       matrix:
         version:
           - '1.3'
+          - 'lts'
+          - '1.11'
           - '1'
         os:
           - ubuntu-latest
           - macos-latest
           - windows-latest
         arch:
-          - x64
+          - 'default'
           - x86
         exclude:
         - os: macOS-latest
           arch: x86
+        - os: macOS-latest
+          version: '1.3'
     steps:
       - uses: actions/checkout@v5
       - uses: julia-actions/setup-julia@v2
