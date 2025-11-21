@@ -43,7 +43,9 @@ mutable struct XMLDocument
         @assert s.nodetype == XML_DOCUMENT_NODE
         @assert s.doc == ptr
 
-        new(ptr, s)
+        xmldoc = new(ptr, s)
+        finalizer(xmldoc, free)
+        xmldoc
     end
 
     function XMLDocument()
